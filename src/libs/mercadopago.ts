@@ -1,7 +1,7 @@
 import { MercadoPagoConfig, Payment, Preference } from "mercadopago"
 import { Items } from "mercadopago/dist/clients/commonTypes"
 import { Payer } from "../api/components/payer/Domain/Payer"
-import { Pay } from "../api/components/pay/Domain/pay"
+import { Pay } from "../api/components/pay/Domain/Pay"
 
 const client = new MercadoPagoConfig({ accessToken: process.env.ACCESS_TOKEN_MP || "" })
 

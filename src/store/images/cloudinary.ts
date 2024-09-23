@@ -9,7 +9,7 @@ export const config = cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-export const uploadImages = async (images) => {
+export const uploadImages = async (images:any[]) => {
     try {
         const uploadPromises = images.map(async (image) => {
             try {
@@ -31,7 +31,7 @@ export const uploadImages = async (images) => {
     }
 }
 
-export const deleteImage = async (imageUrl) => {
+export const deleteImage = async (imageUrl:any) => {
     const imageId = imageUrl.split('/').pop()?.split('.')[0] 
     try {
         return await cloudinary.uploader.destroy(imageId)

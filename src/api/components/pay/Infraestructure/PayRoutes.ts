@@ -3,7 +3,7 @@ import { PayController } from "./Pay.controller";
 import { getRepo } from "../../common/Infrastructure/GetRepo";
 import { PayerServiceImpl } from "../../payer/Infraestructure/PayerServiceImpl";
 import { PayServiceImpl } from "./PayServiceImpl";
-import { Pay } from "../Domain/pay";
+import { Pay } from "../Domain/Pay";
 
 import { PaymentService } from "../../../../libs/mercadopago";
 import { ProductPay } from "../../productsPay/Domain/ProductPay";

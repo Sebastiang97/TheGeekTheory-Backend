@@ -8,7 +8,7 @@ import { MapperProductPayToItemsMP } from "../../productsPay/Application/MapperP
 import { PaymentService } from "../../../../libs/mercadopago";
 import { CreatePay } from "../Application/CreatePay";
 import { ProductPayService } from "../../productsPay/Domain/ProductPayService";
-import { Pay } from "../Domain/pay";
+import { Pay } from "../Domain/Pay";
 // import { CreateProductsPay } from "../../productsPay/Application/CreateProductPay";
 // import { CreateResourceImage } from "../../common/Application/CreateResourceImage";
 import { ResourceImageService } from "../../common/Domain/ResourceImageService";

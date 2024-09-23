@@ -1,4 +1,4 @@
-import { Pay } from "../Domain/pay";
+import { Pay } from "../Domain/Pay";
 import { PayService } from "../Domain/PayService";
 
 export class GetPays {

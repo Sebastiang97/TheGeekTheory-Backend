@@ -1,5 +1,5 @@
 import { PayService } from "../Domain/PayService";
-import { Pay } from "../Domain/pay";
+import { Pay } from "../Domain/Pay";
 
 export class GetPayById {
     constructor(private payService: PayService) { }

@@ -1,5 +1,5 @@
 import { Product } from "../../product/Domain/Product";
-import { Pay } from "../Domain/pay";
+import { Pay } from "../Domain/Pay";
 
 export class ToPay {
     constructor() { }
