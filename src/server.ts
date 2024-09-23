@@ -31,11 +31,12 @@ export class Server {
     this.app.use(
       cors({
         origin : [
+          "https://the-geek-theory-frontend.vercel.app/",
           "http://localhost:5173", 
-          "https://the-geek-theory-frontend.vercel.app/"
         ],
         methods: "GET,POST,PUT,DELETE",
-        credentials: true
+        allowedHeaders: 'Content-Type, Authorization'
+        // credentials: true
       })
     );
 
