@@ -30,8 +30,10 @@ export class Server {
     this.app.use( express.json() );
     this.app.use(
       cors({
+        origin: 'https://the-geek-theory-frontend.vercel.app',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'Authorization']
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true
        })
     );
 
