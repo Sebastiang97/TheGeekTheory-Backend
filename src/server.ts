@@ -5,8 +5,6 @@ import fileUpload from "express-fileupload"
 import session from 'express-session';
 import passport from 'passport';
 import './libs/passport'
-// import './libs/whatsapp'
-import dotenv from 'dotenv'
 
 interface Options {
   port: number;
@@ -29,7 +27,6 @@ export class Server {
   
   
   async start() {
-    dotenv.config()
     this.app.use( express.json() );
     this.app.use(
       cors({
