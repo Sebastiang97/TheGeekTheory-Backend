@@ -30,7 +30,10 @@ export class Server {
     this.app.use( express.json() );
     this.app.use(
       cors({
-        origin : "http://localhost:5173",
+        origin : [
+          "http://localhost:5173", 
+          "https://the-geek-theory-frontend.vercel.app/"
+        ],
         methods: "GET,POST,PUT,DELETE",
         credentials: true
       })
