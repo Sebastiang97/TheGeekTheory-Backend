@@ -23,7 +23,10 @@ export class ProductController {
 
                 return res.status(200).json( prints )
             })
-            .catch(error => res.status( 400 ).json( { error } ))
+            .catch(error => {
+                console.log(error)
+                return res.status( 400 ).json( { error } )
+            })
     }
 
     getById = (_: Request, __: Response, ) => {
