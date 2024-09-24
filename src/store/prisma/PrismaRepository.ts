@@ -25,7 +25,7 @@ export class PrismaRepository<T> implements Repository<T> {
     })
   }
 
-  async findByProp(options :any): Promise<T | null> {
+  async findByProp(options :any): Promise<T[]> {
     const model = prisma[this.model as keyof typeof prisma] as any;
     return model.findMany(options)
   }

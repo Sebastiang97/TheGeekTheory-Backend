@@ -6,7 +6,7 @@ export class GetSubCategoriesByCode {
     constructor(private subCategoryService:SubCategoryService)
     {}
 
-    execute(code: string): Promise<SubCategory | null>{
+    execute(code: string): Promise<SubCategory[]>{
         return this.subCategoryService.findByProp({
             where: {
                 code

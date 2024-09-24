@@ -16,7 +16,7 @@ export abstract class BaseServiceImpl<M extends { id: string }> implements BaseS
         return this.repository.findById(id, options)
     }
 
-    findByProp(options?: any): Promise<M | null> {
+    findByProp(options?: any): Promise<M[]> {
         return this.repository.findByProp(options)
     }
     

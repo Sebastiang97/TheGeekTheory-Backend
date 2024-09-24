@@ -26,6 +26,8 @@ import { GetTableTotalPay } from "../Application/GetTableTotalPay";
 import { CreateProductsPayWithResourceAndPrint } from "../../productsPay/Application/CreateProductsPayWithImageAndPrint";
 import { PrintProductPayService } from "../../printProductPay/Domain/PrintProductPayService";
 import { Product } from "../../product/Domain/Product";
+import { PARSE_INT } from "../../../../utils/parseInt";
+import { GET_NEXT_PREVIOUS_CURSOR, GET_PAGINATION_QUERY } from "../../../../utils/GetPaginationQuery";
 // import { SendConfirmation } from "../../mailService/Application/SendMail";
 // import { HTML } from "../../user/Infraestructure/templateHTML";
 // import { SendMessage } from "../../whatsapp/Application/SendMessage";
@@ -53,19 +55,26 @@ export class PayController {
         return new GetPays(this.service)
             .execute()
             .then(pay =>{
-                res.status(200).json(pay)
+                return res.status(200).json(pay)
             }).catch(err => {
-                res.status(400).json(err)
+                return res.status(400).json(err)
             })
     }
 
-    getPayAndPayer = (_: Request, res: Response,) => {
+    getPayAndPayer = (req: Request, res: Response,) => {
+        const cursor = req.query.cursor as string
+        const direction = req.query.direction as string
+        const limit = PARSE_INT(req.query.limit) as number
+        
+        const query = GET_PAGINATION_QUERY({limit, cursor, direction})
+
         return new GetTableTotalPay(this.service)
-            .execute()
-            .then(pay =>{
-                res.status(200).json(pay)
+            .execute(query)
+            .then(pays =>{
+                return res.status(200).json(GET_NEXT_PREVIOUS_CURSOR(pays))
             }).catch(err => {
-                res.status(400).json(err)
+                console.log(err)
+                return res.status(400).json(err)
             })
     }
 
@@ -74,20 +83,26 @@ export class PayController {
         return new GetPayById(this.service)
             .execute(payId)
             .then(pay =>{
-                res.status(200).json(pay)
+                return res.status(200).json(pay)
             }).catch(err => {
-                res.status(400).json(err)
+                return res.status(400).json(err)
             })
     }
 
     getByPayerId = (req: Request, res: Response) => {
         const {payerId} = req.params
+        const cursor = req.query.cursor as string
+        const direction = req.query.direction as string
+        const limit = PARSE_INT(req.query.limit) as number
+        
+        const query = GET_PAGINATION_QUERY({limit, cursor, direction})
         return new GetPayByPayerId(this.service)
-            .execute(payerId)
-            .then(pay =>{
-                res.status(200).json(pay)
+            .execute(payerId, query)
+            .then(pays =>{
+                return res.status(200).json(GET_NEXT_PREVIOUS_CURSOR(pays))
             }).catch(err => {
-                res.status(400).json(err)
+                console.log(err)
+                return res.status(400).json(err)
             })
     }
 
@@ -102,13 +117,6 @@ export class PayController {
         const files = req.files
 
         const ids = listElements.map((el:any) => el.id)
-        console.log({
-            body: req.body, 
-            files,
-            payerId,
-            listElements
-            
-        })
 
         if (!files || Object.keys(files).length === 0) {
             return res.status(400).json({error: 'No se ha encontrado ningún archivo.'})

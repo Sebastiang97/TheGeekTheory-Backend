@@ -6,7 +6,7 @@ export class GetProductPayByPayId {
     constructor(private productsPayService:ProductPayService)
     {}
 
-    execute(payId: string): Promise<ProductPay | null>{
+    execute(payId: string): Promise<ProductPay[]>{
         return this.productsPayService.findByProp({
             where: {payId}
         })
