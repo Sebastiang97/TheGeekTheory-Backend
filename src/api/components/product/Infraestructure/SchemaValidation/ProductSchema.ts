@@ -19,14 +19,8 @@ export const productDTOSchema = z.object({
     description: z.string(),
     quantity: z.number().min(0),
     typeStamping: z.string(),
-    color: z.object({
-        code: z.string(),
-        name: z.string(),
-    }),
-    size: z.object({
-        code: z.string(),
-        name: z.string(),
-    })
+    color: z.string(),
+    size: z.string()
 })
 
 

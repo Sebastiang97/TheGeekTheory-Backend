@@ -16,4 +16,8 @@ export class ResourceImageServiceImpl extends BaseServiceImpl<ResourceImage> imp
     uploadImages(files: FileArray): Promise<string[]>{
        return ImageService.uploadImages(files)
     }
+
+    deleteImages(img: string[]): Promise<any> {
+        return ImageService.deleteImage(img)
+    }
 }

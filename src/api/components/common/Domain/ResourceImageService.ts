@@ -4,4 +4,6 @@ import { ResourceImage } from "./ResourceImage";
 
 export interface ResourceImageService extends BaseService<ResourceImage>{
     uploadImages(files: FileArray): Promise<string[]>
+
+    deleteImages(img:string[]): Promise<any[]>
 }

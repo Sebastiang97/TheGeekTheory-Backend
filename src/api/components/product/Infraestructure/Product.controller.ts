@@ -7,6 +7,11 @@ import { CreateProduct } from "../Application/CreateProduct";
 import { FileArray } from "express-fileupload";
 import { CreateResourceImage } from "../../common/Application/CreateResourceImage";
 import { GetProductsBySubCategoryId } from "../Application/GetProductsBySubCategoryId";
+import { GetProductById } from "../Application/GetProductById";
+import { DeleteProductById } from "../Application/DeleteProductById";
+import { Product } from "../Domain/Product";
+import { UpdateProduct } from "../Application/UpdateProduct";
+import { ProductUpdateSchema } from "./SchemaValidation/ProductUpdateSchema";
   
 
 export class ProductController {
@@ -53,9 +58,13 @@ export class ProductController {
     }
 
     create = (req: Request, res: Response, ) => { 
+        console.log({
+            body: req.body,
+            files: req.files
+        })
         let product = req.body
-        // product.price = parseFloat(req.body.price)
-        // product.quantity = parseFloat(req.body.quantity)
+        product.price = parseFloat(req.body.price)
+        product.quantity = parseFloat(req.body.quantity)
         // product.color = JSON.parse(product.color)
         // product.size = JSON.parse(product.size)
         
@@ -112,12 +121,56 @@ export class ProductController {
         
     }
 
-    update = (_: Request, __: Response, ) => {
-        return
-        
+    update = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        let product = req.body
+        const result = ProductUpdateSchema.safeParse(product)
+        if(!result.success){
+            return res.status(400).json({error:result.error.issues})
+        }
+        return new UpdateProduct(this.service)
+            .execute(product, id)
+            .then(product =>{
+                return res.status(200).json(product)
+            })
+            .catch(error => {
+                console.log(error)
+                res.status( 400 ).json(error)
+            })
     }
 
-    delete = (_: Request, __: Response, ) => {
-        return
+    delete = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        let productsBd: Product[] = []
+        return new GetProductById(this.service)
+            .execute(id)
+            .then(products =>{
+                productsBd = products
+                return new DeleteProductById(this.service).
+                    execute(products[0].id)
+            })
+            .then(_=>{
+                if(productsBd[0].urlImage?.length){
+                    const urls:string[] = productsBd[0].urlImage.map(img => img.url)
+                    return this.imageService.deleteImages(urls)
+                }
+                return 
+            })
+            .then(_=>{
+                if(productsBd[0].urlImage?.length){
+                    return this.imageService.deleteAll({
+                        where: {
+                            productId: productsBd[0].id,
+                        }
+                    })
+                }
+                return 
+            })
+            .then(_=>{
+                return res.status(200)
+            }).catch(error => {
+                console.log(error)
+                res.status( 400 ).json(error)
+            })
     }
 }

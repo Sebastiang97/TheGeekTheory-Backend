@@ -72,4 +72,21 @@ export class PrismaRepository<T> implements Repository<T> {
     await model.delete({ where: { id } })
     return true
   }
+
+  async deleteByProperty(data: any): Promise<boolean> {
+    const model = prisma[this.model as keyof typeof prisma] as any;
+    await model.deleteMany(data)
+    return true
+  }
+
+  async deleteAll(options:any): Promise<boolean> {
+    try {
+      const model = prisma[this.model as keyof typeof prisma] as any;
+      console.log({options})
+      return model.delete(options)
+    } catch (error:any) {
+      console.log(error)
+      return error
+    }
+  }
 }

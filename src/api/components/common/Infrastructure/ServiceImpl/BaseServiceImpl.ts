@@ -44,4 +44,12 @@ export abstract class BaseServiceImpl<M extends { id: string }> implements BaseS
         return this.repository.delete(id)
     }
 
+    deleteByProperty(data: any): Promise<boolean> {
+        return this.repository.deleteByProperty(data)
+    }
+
+    deleteAll(options: any): Promise<boolean> {
+        throw this.repository.deleteAll(options)
+    }
+
 }

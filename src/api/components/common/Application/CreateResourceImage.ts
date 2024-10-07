@@ -9,7 +9,7 @@ export class CreateResourceImage {
         const imgs = imagesUpload.map(async img=> {
             let resourceImage: ResourceImage = {} as ResourceImage
             resourceImage.url = img 
-            resourceImage.isMain = false 
+            // resourceImage.isMain = false 
             resourceImage = {
                 ...conectId,
                 ...resourceImage

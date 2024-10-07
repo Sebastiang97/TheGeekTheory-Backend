@@ -3,8 +3,6 @@ import { v2 as cloudinary } from 'cloudinary';
 
 export abstract class ImageService {
 
-    
-
     static async uploadImages(files: FileArray ): Promise<string[]>{
         let imagesArray: UploadedFile[] = Array.isArray(files?.file) ? files.file : [files?.file]
         const uploadPromises = imagesArray.map(async (image) => {
@@ -18,8 +16,6 @@ export abstract class ImageService {
             }
         })
         return await Promise.all(uploadPromises)
-        
-
     }
 
     static async uploadedFile(image: UploadedFile): Promise<string>{
@@ -31,5 +27,20 @@ export abstract class ImageService {
         } catch (error: any) {
             return error
         }
+    }
+
+    static async deleteImage(urlImages:string[]):Promise<any>{
+        const deletePromise = urlImages.map(async img=>{
+            try {
+                const imageId = img.split('/').pop()?.split('.')[0] 
+                if(imageId){
+                    return cloudinary.uploader.destroy(imageId)
+                }
+                return new Error("No se puede borrar la imagen")
+            } catch (error:any) {
+                return error
+            }
+        })
+        return Promise.all(deletePromise)
     }
 }

@@ -5,6 +5,8 @@ import { ResourceImage } from "../../common/Domain/ResourceImage";
 import { ResourceImageServiceImpl } from "../../common/Infrastructure/ResourceImageServiceImpl";
 import { SubCategory } from "../Domain/SubCategory";
 import { SubCategoryServiceImpl } from "./SubCategoryServiceImpl";
+import { Product } from "../../product/Domain/Product";
+import { ProductServiceImpl } from "../../product/Infraestructure/ProductServiceImpl";
 // import { AuthMiddleware } from "../../auth/infraestructure/AuthMiddleware";
 
 
@@ -18,12 +20,21 @@ export class SubCategoryRoutes{
     static get routes(): Router {
         const router = Router();
         const SubCategoryRepository = getRepo<SubCategory>("SubCategory")
-        const productImageRepository = getRepo<ResourceImage>("SubCategoryImage")
+        const productRepository = getRepo<Product>("Product")
+        const subImageRepository = getRepo<ResourceImage>("SubCategoryImage")
+        const productImageRepository = getRepo<ResourceImage>("ProductImage")
+        const productServiceImpl = new ProductServiceImpl(productRepository)
 
-        const resourceImageServiceImpl = new ResourceImageServiceImpl(productImageRepository)
+        const subResourceImageServiceImpl = new ResourceImageServiceImpl(subImageRepository)
+        const productResourceImageServiceImpl = new ResourceImageServiceImpl(productImageRepository)
         const subCategoryServiceImpl = new SubCategoryServiceImpl(SubCategoryRepository)
 
-        const productController = new SubCategoryController(subCategoryServiceImpl, resourceImageServiceImpl)
+        const productController = new SubCategoryController(
+            subCategoryServiceImpl, 
+            subResourceImageServiceImpl,
+            productServiceImpl,
+            productResourceImageServiceImpl
+        )
         
 
         // router.get("/", AuthMiddleware.hasAdmin, productController.list)
