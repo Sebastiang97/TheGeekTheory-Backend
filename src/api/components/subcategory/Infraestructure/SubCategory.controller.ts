@@ -10,13 +10,11 @@ import { SubCategory } from "../Domain/SubCategory";
 import { GetSubCategoriesById } from "../Application/GetSubCategoriesById";
 import { GetSubCategoriesByCode } from "../Application/GetSubCategoriesByCode";
 import { GetSubCategoriesByCategoryId } from "../Application/GetSubCategoriesByCategoryId";
-import { DeleteSubCategoryById } from "../Application/DeleteSubCategoryById";
 import { ProductService } from "../../product/Domain/ProductService";
-import { DeleteProductByProperty } from "../../product/Application/DeleteProductByProperty";
 import { GetSubCategoryById } from "../Application/GetSubCategoryById";
 import { GetProductsBySubCategoryId } from "../../product/Application/GetProductsBySubCategoryId";
-import { Product } from "../../product/Domain/Product";
-import { DeleteManyResourceImageById } from "../../common/Application/DeleteResourceImage";
+import { DeleteManyProducts } from "../../product/Application/DeleteManyProducts";
+import { DeleteManySubCategories } from "../Application/DeleteManySubCategories";
 
 
 export class SubCategoryController {
@@ -109,56 +107,25 @@ export class SubCategoryController {
 
     delete = (req: Request, res: Response, ) => {
         const {id} = req.params
-        let subCategoriesBd: SubCategory[] = []
-        let productsBd: Product[] = []
-        return new GetSubCategoryById(this.service)
+        return new GetProductsBySubCategoryId(this.productService)
             .execute(id)
-            .then(subcategories=>{
-                subCategoriesBd = subcategories
-                if(subCategoriesBd && subCategoriesBd[0]?.urlImage?.length){
-                    const urls:string[] = subCategoriesBd[0].urlImage.map(img => img.url)
-                    return this.imageService.deleteImages(urls)
-                }
-                return 
-            })
-            .then(_=>{
-                if(subCategoriesBd && subCategoriesBd[0]?.urlImage?.length){
-                    return new DeleteManyResourceImageById(this.imageService)
-                        .execute(subCategoriesBd[0]?.urlImage)
-                }
-                return 
-            })
-            .then(_=>{
-                return new DeleteSubCategoryById(this.service)
-                    .execute(id)
-            })
-            .then(_=>{
-                return new GetProductsBySubCategoryId(this.productService)
-                    .execute(id)
-            })
             .then(products=>{
-                productsBd = products
-                if(productsBd.length && productsBd[0]?.urlImage?.length){
-                    const urls:string[] = productsBd[0].urlImage.map(img => img.url)
-                    return this.productImageService.deleteImages(urls)
-                }
-                return 
+                return new DeleteManyProducts(
+                    this.productService, 
+                    this.productImageService
+                )
+                .execute(products)
             })
             .then(_=>{
-                if(productsBd.length && productsBd[0]?.urlImage?.length){
-                    return new DeleteManyResourceImageById(this.imageService)
-                        .execute(productsBd[0]?.urlImage)
-                }
-                return 
+                return new GetSubCategoryById(this.service)
+                    .execute(id)
             })
-            .then(_=>{
-                if(productsBd.length){
-                    return new DeleteProductByProperty(this.productService)
-                        .execute({
-                            where: {subCategoryId: id}
-                        })
-                }
-                return 
+            .then(subCategories=>{
+                return new DeleteManySubCategories(
+                    this.service,
+                    this.imageService
+                )
+                .execute(subCategories)
             })
             .then(_=>{
                 return res.json( { ok:"ok" } )
@@ -167,6 +134,62 @@ export class SubCategoryController {
                 console.log({error})  
                 return res.status( 400 ).json( { error } )
             })
+        // return new GetSubCategoryById(this.service)
+        //     .execute(id)
+        //     .then(subcategories=>{
+        //         subCategoriesBd = subcategories
+        //         if(subCategoriesBd && subCategoriesBd[0]?.urlImage?.length){
+        //             const urls:string[] = subCategoriesBd[0].urlImage.map(img => img.url)
+        //             return this.imageService.deleteImages(urls)
+        //         }
+        //         return 
+        //     })
+        //     .then(_=>{
+        //         if(subCategoriesBd && subCategoriesBd[0]?.urlImage?.length){
+        //             return new DeleteManyResourceImageById(this.imageService)
+        //                 .execute(subCategoriesBd[0]?.urlImage)
+        //         }
+        //         return 
+        //     })
+        //     .then(_=>{
+        //         return new DeleteSubCategoryById(this.service)
+        //             .execute(id)
+        //     })
+        //     .then(_=>{
+        //         return new GetProductsBySubCategoryId(this.productService)
+        //             .execute(id)
+        //     })
+        //     .then(products=>{
+        //         productsBd = products
+        //         if(productsBd.length && productsBd[0]?.urlImage?.length){
+        //             const urls:string[] = productsBd[0].urlImage.map(img => img.url)
+        //             return this.productImageService.deleteImages(urls)
+        //         }
+        //         return 
+        //     })
+        //     .then(_=>{
+        //         if(productsBd.length && productsBd[0]?.urlImage?.length){
+        //             return new DeleteManyResourceImageById(this.imageService)
+        //                 .execute(productsBd[0]?.urlImage)
+        //         }
+        //         return 
+        //     })
+        //     .then(_=>{
+        //         if(productsBd.length){
+        //             return new DeleteProductByProperty(this.productService)
+        //                 .execute({
+        //                     where: {subCategoryId: id}
+        //                 })
+        //         }
+        //         return 
+        //     })
+        //     .then(_=>{
+        //         return res.json( { ok:"ok" } )
+        //     })
+        //     .catch(error => {
+        //         console.log({error})  
+        //         return res.status( 400 ).json( { error } )
+        //     })
            
     }
 }
