@@ -1,5 +1,4 @@
-import { DeleteImageByUrls } from "../../common/Application/DeleteImageByUrls";
-import { DeleteManyResourceImageById } from "../../common/Application/DeleteResourceImage";
+import { DeleteImageAndResourceImage } from "../../common/Application/DeleteImageAndResourceImage";
 import { ResourceImageService } from "../../common/Domain/ResourceImageService";
 import { Product } from "../Domain/Product";
 import { ProductService } from "../Domain/ProductService";
@@ -16,11 +15,13 @@ export class DeleteManyProducts {
         if(products.length){
             const productsPromise = products.map(async product=>{
                 if(product?.urlImage && product?.urlImage?.length){
-                    const urls:string[] = product?.urlImage.map(img => img.url)
-                    await new DeleteImageByUrls(this.productImageService)
-                        .execute(urls)
-                    await new DeleteManyResourceImageById(this.productImageService)
-                       .execute(product.urlImage)
+                    await new DeleteImageAndResourceImage(this.productImageService)
+                        .execute(product.urlImage)
+                    // const urls:string[] = sub?.urlImage.map(img => img.url)
+                    // await new DeleteImageByUrls(this.subImageService)
+                    //     .execute(urls)
+                    // await new DeleteManyResourceImageById(this.subImageService)
+                    //    .execute(sub.urlImage)
                 }
                 return new DeleteProductByProperty(this.service)
                     .execute({

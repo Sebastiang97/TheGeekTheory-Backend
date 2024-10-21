@@ -7,11 +7,13 @@ export class GetSubCategoryById {
     {}
 
     execute(id: string): Promise<SubCategory[]>{
-        return this.subCategoryService.findAll({
+        return this.subCategoryService.findByProp({
             where: {
-                id,
+                id
             },
-            include: {urlImage: true}
-          })
+            include: {
+                urlImage: true
+            }
+        })
     }
 }

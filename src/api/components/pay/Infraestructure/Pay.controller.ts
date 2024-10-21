@@ -162,16 +162,16 @@ export class PayController {
                 return new MapperProductPayToItemsMP()
                     .execute(productsPay)
             })
-            .then(items=>{
-                console.log({items})
-                return res.json(items)
+            .then(items => {
+                return this.paymentService
+                    .createPrefence(items, pay, payerReq)
             })
-            // .then(items => {
-            //     return this.paymentService
-            //         .createPrefence(items, payReq, payerReq)
-            // })
-            // .then(result => {
-            //     return res.json(result.init_point)
+            .then(result => {
+                return res.json(result.init_point)
+            })
+            // .then(items=>{
+            //     console.log({items})
+            //     return res.json(items)
             // })
             .catch(err => {
                 console.log({err})

@@ -13,6 +13,8 @@ import { GetProductsByCategoryId } from "../../product/Application/GetProductsBy
 import { DeleteManyProducts } from "../../product/Application/DeleteManyProducts";
 import { DeleteManySubCategories } from "../../subcategory/Application/DeleteManySubCategories";
 import { DeleteManyCategories } from "../Application/DeleteManyCategories";
+import { CategoryUpdateSchema } from "./SchemaValidation/CategoryUpdateSchema";
+import { UpdateCategory } from "../Application/UpdateCategory";
 
 
 export class CategoryController {
@@ -56,9 +58,25 @@ export class CategoryController {
             })
     }
 
-    update = (_: Request, __: Response, ) => {
-        return
+    update = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        let categoryUpdateDTO = {
+            name: req.body.name
+        }
+        const result = CategoryUpdateSchema.safeParse(categoryUpdateDTO)
+        if(!result.success){
+            return res.status(400).json({error: result.error.issues})
+        }
         
+        return new UpdateCategory(this.service)
+            .execute(categoryUpdateDTO, id)
+            .then(category=>{
+                return res.json(category)
+            })
+            .catch(error => {
+                console.log(error)                
+                return res.status( 400 ).json( { error } )
+            })
     }
 
     delete = (req: Request, res: Response, ) => {

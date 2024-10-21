@@ -1,5 +1,4 @@
-import { DeleteImageByUrls } from "../../common/Application/DeleteImageByUrls";
-import { DeleteManyResourceImageById } from "../../common/Application/DeleteResourceImage";
+import { DeleteImageAndResourceImage } from "../../common/Application/DeleteImageAndResourceImage";
 import { ResourceImageService } from "../../common/Domain/ResourceImageService";
 import { SubCategory } from "../Domain/SubCategory";
 import { SubCategoryService } from "../Domain/SubCategoryService";
@@ -18,11 +17,13 @@ export class DeleteManySubCategories {
         if(subs.length){
             const subsPromise = subs.map(async sub=>{
                 if(sub?.urlImage && sub?.urlImage?.length){
-                    const urls:string[] = sub?.urlImage.map(img => img.url)
-                    await new DeleteImageByUrls(this.subImageService)
-                        .execute(urls)
-                    await new DeleteManyResourceImageById(this.subImageService)
-                       .execute(sub.urlImage)
+                    await new DeleteImageAndResourceImage(this.subImageService)
+                        .execute(sub.urlImage)
+                    // const urls:string[] = sub?.urlImage.map(img => img.url)
+                    // await new DeleteImageByUrls(this.subImageService)
+                    //     .execute(urls)
+                    // await new DeleteManyResourceImageById(this.subImageService)
+                    //    .execute(sub.urlImage)
                 }
                 return new DeleteSubCategoryByProperty(this.servce)
                     .execute({

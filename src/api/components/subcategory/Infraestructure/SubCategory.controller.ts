@@ -15,6 +15,11 @@ import { GetSubCategoryById } from "../Application/GetSubCategoryById";
 import { GetProductsBySubCategoryId } from "../../product/Application/GetProductsBySubCategoryId";
 import { DeleteManyProducts } from "../../product/Application/DeleteManyProducts";
 import { DeleteManySubCategories } from "../Application/DeleteManySubCategories";
+import { SubCategoryUpdateSchemaDTO } from "./SchemaValidation/SubCategoryUptdateSchemaDTO";
+import { UpdateSubCategory } from "../Application/UpdateSubCategory";
+import { SubCategoryReqUpdate } from "./resource/SubCategoryReqUpdate";
+import { CreateImageByFileArray } from "../../common/Application/CreateImageByFileArray";
+import { EditResourceImage } from "../../common/Application/EditResourceImage";
 
 
 export class SubCategoryController {
@@ -61,7 +66,6 @@ export class SubCategoryController {
 
     create = (req: Request, res: Response, ) => {
         let subCategory: SubCategory = req.body
-        console.log(req.files)
         if (!req.files || Object.keys(req.files).length === 0) {
             return res.status(400).json({error: 'No se ha encontrado ningún archivo.'})
         }
@@ -75,7 +79,8 @@ export class SubCategoryController {
             .execute(subCategory)
             .then(subCategoryEntity => {
                 subCategory = subCategoryEntity
-                return this.imageService.uploadImages(req.files as FileArray)
+                return new CreateImageByFileArray(this.imageService)
+                    .execute(req.files as FileArray)
             })
             .then(uploadResult => {
                 return new CreateResourceImage(this.imageService)
@@ -100,9 +105,54 @@ export class SubCategoryController {
 
     // }
 
-    update = (_: Request, __: Response, ) => {
-        return
+    update = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        let subCategoryUpdateDTO: SubCategoryReqUpdate = {
+            name: req.body.name
+        }
+        let urlImageDTO = req.body.urlImage
         
+        const result = SubCategoryUpdateSchemaDTO.safeParse(subCategoryUpdateDTO)
+        if(!result.success){
+            return res.status(400).json({error: result.error.issues})
+        }
+
+        let subCategoryEntity: SubCategory[] = []
+        return new GetSubCategoryById(this.service)
+            .execute(id)
+            .then(subCategory=>{
+                subCategoryEntity = subCategory
+                if(subCategory.length){
+                    return new UpdateSubCategory(this.service)
+                        .execute(id, subCategoryUpdateDTO)
+                }
+                return {}
+            })
+            .then(_ => {
+                return new EditResourceImage(this.imageService)
+                    .execute(urlImageDTO, subCategoryEntity[0].urlImage)
+            })
+            .then(_=>{
+                if(req.files && Object.keys(req.files).length && subCategoryEntity.length){
+                    return new CreateImageByFileArray(this.imageService)
+                        .execute(req.files as FileArray)
+                }
+                return []
+            })
+            .then(uploadResult => {
+                if(uploadResult.length){
+                    return new CreateResourceImage(this.imageService)
+                    .execute(uploadResult, {subCategoryId: id})
+                }
+                return []
+            })
+            .then(_=>{
+                return res.json(subCategoryEntity)
+            })
+            .catch(error => {
+                console.log(error)                
+                return res.status( 400 ).json( { error } )
+            })
     }
 
     delete = (req: Request, res: Response, ) => {

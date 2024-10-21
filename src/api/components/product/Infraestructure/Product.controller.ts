@@ -12,6 +12,10 @@ import { DeleteProductById } from "../Application/DeleteProductById";
 import { Product } from "../Domain/Product";
 import { UpdateProduct } from "../Application/UpdateProduct";
 import { ProductUpdateSchema } from "./SchemaValidation/ProductUpdateSchema";
+import { CreateImageByFileArray } from "../../common/Application/CreateImageByFileArray";
+import { EditResourceImage } from "../../common/Application/EditResourceImage";
+import { ProductReqUpdate } from "./resource/ProductReqUpdate";
+import { DeleteImageAndResourceImage } from "../../common/Application/DeleteImageAndResourceImage";
   
 
 export class ProductController {
@@ -123,15 +127,56 @@ export class ProductController {
 
     update = (req: Request, res: Response, ) => {
         const {id} = req.params
-        let product = req.body
-        const result = ProductUpdateSchema.safeParse(product)
+        let productDTO: ProductReqUpdate = {
+            name: req.body.name,
+            description: req.body.description,
+            color: req.body.color,
+            price: parseInt(req.body.price),
+            quantity: parseInt(req.body.quantity),
+            size: req.body.size,
+            typeStamping: req.body.typeStamping
+        }
+        let urlImageDTO = req.body.urlImage
+
+        const result = ProductUpdateSchema.safeParse(productDTO)
         if(!result.success){
             return res.status(400).json({error:result.error.issues})
         }
-        return new UpdateProduct(this.service)
-            .execute(product, id)
-            .then(product =>{
-                return res.status(200).json(product)
+        
+        let productEntity: Product[] = []
+        return new GetProductById(this.service)
+            .execute(id)
+            .then(product=>{
+                productEntity = product
+                if(product.length){
+                    return new UpdateProduct(this.service)
+                    .execute(productDTO, id)
+                }
+                return {}
+            })
+            .then(_ => {
+                return new EditResourceImage(this.imageService)
+                    .execute(urlImageDTO, productEntity[0].urlImage)
+            })
+            .then(_=>{
+                if(req.files && Object.keys(req.files).length && productEntity.length){
+                    return new CreateImageByFileArray(this.imageService)
+                        .execute(req.files as FileArray)
+                }
+                return []
+            })
+            .then(uploadResult => {
+                if(uploadResult.length){
+                    return new CreateResourceImage(this.imageService)
+                    .execute(uploadResult, {productId: id})
+                }
+                return []
+            })
+            .then(resourceImage =>{
+                if(productEntity[0].urlImage?.length){
+                    productEntity[0].urlImage = productEntity[0].urlImage.concat(resourceImage)
+                }
+                return res.json(productEntity)
             })
             .catch(error => {
                 console.log(error)
@@ -146,28 +191,15 @@ export class ProductController {
             .execute(id)
             .then(products =>{
                 productsBd = products
+                return new DeleteImageAndResourceImage(this.imageService)
+                    .execute(productsBd[0].urlImage)
+            })
+            .then(_=>{
                 return new DeleteProductById(this.service).
-                    execute(products[0].id)
+                    execute(productsBd[0].id)
             })
             .then(_=>{
-                if(productsBd[0].urlImage?.length){
-                    const urls:string[] = productsBd[0].urlImage.map(img => img.url)
-                    return this.imageService.deleteImages(urls)
-                }
-                return 
-            })
-            .then(_=>{
-                if(productsBd[0].urlImage?.length){
-                    return this.imageService.deleteAll({
-                        where: {
-                            productId: productsBd[0].id,
-                        }
-                    })
-                }
-                return 
-            })
-            .then(_=>{
-                return res.status(200)
+                return res.json( { ok:"ok" } )
             }).catch(error => {
                 console.log(error)
                 res.status( 400 ).json(error)

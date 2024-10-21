@@ -48,12 +48,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/fma1p2hozywndfssxot4.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/xyvvcx5yewzixawhuocq.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/cjcbpvn1rryvdmsgnce0.png',
-            isMain: false 
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/egdjkv2vbgw1ap2xntir.png',
           }
         ],
       },
@@ -74,12 +72,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: false 
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           }
         ],
       },
@@ -100,12 +96,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: false 
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           }
         ],
       },
@@ -127,12 +121,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: false 
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           }
         ],
       },
@@ -153,12 +145,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: false 
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           }
         ],
       },
@@ -179,12 +169,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           }
         ],
       },
@@ -205,12 +193,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           }
         ],
       },
@@ -231,12 +217,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           }
         ],
       },
@@ -258,12 +242,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           }
         ],
       },
@@ -284,12 +266,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           }
         ],
       },
@@ -310,12 +290,10 @@ async function main() {
       urlImage: {
         create: [
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
           },
           { 
-            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
-            isMain: true
+            url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
           }
         ],
       },
@@ -325,14 +303,14 @@ async function main() {
   // Crear imágenes para subcategorías
   await prisma.subCategoryImage.create({
     data: {
-      url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/b5g3uctj9epkbww55mqa.png',
+      url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/j4ruiqblwq6hcpvzbafq.png',
       subCategoryId: cropTopsSubCategory.id,
     },
   });
 
   await prisma.subCategoryImage.create({
     data: {
-      url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/yj0mc68ti0cwldmc9w9z.png',
+      url: 'https://res.cloudinary.com/dk41avvjd/image/upload/v1716168105/v0dfrjgywfufhkkcy0lv.png',
       subCategoryId: tShirtsSubCategory.id,
     },
   });
