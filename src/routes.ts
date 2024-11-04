@@ -8,6 +8,7 @@ import { PayerRoutes } from "./api/components/payer/Infraestructure/PayerRoutes"
 import { PayRoutes } from "./api/components/pay/Infraestructure/PayRoutes";
 import { ProductPayRoutes } from "./api/components/productsPay/Infraestructure/ProductPayRoutes";
 import { PrintRoutes } from "./api/components/print/Infraestructure/PrintRoutes";
+import { WhatsAppRoutes } from "./api/components/whatsapp/infraestructure/WhatsappRoutes";
 
 export class AppRoutes {
 
@@ -25,6 +26,7 @@ export class AppRoutes {
       router.use('/api/payer', PayerRoutes.routes );
       router.use('/api/productspay', ProductPayRoutes.routes );
       router.use('/api/print', PrintRoutes.routes );
+      router.use('/api/whatsapp', WhatsAppRoutes.routes );
       
   
   
