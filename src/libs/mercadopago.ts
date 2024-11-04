@@ -3,7 +3,7 @@ import { Items } from "mercadopago/dist/clients/commonTypes"
 import { Payer } from "../api/components/payer/Domain/Payer"
 import { Pay } from "../api/components/pay/Domain/Pay"
 
-const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN || "" })
+const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN_DEV || "" })
 
 export class PaymentService {
 

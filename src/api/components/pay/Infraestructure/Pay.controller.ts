@@ -28,9 +28,9 @@ import { PrintProductPayService } from "../../printProductPay/Domain/PrintProduc
 import { Product } from "../../product/Domain/Product";
 import { PARSE_INT } from "../../../../utils/parseInt";
 import { GET_NEXT_PREVIOUS_CURSOR, GET_PAGINATION_QUERY } from "../../../../utils/GetPaginationQuery";
-// import { SendConfirmation } from "../../mailService/Application/SendMail";
-// import { HTML } from "../../user/Infraestructure/templateHTML";
-// import { SendMessage } from "../../whatsapp/Application/SendMessage";
+import { SendConfirmation } from "../../mailService/Application/SendMail";
+import { HTML } from "../../user/Infraestructure/templateHTML";
+import { SendMessage } from "../../whatsapp/Application/SendMessage";
 
 export class PayController {
     constructor(
@@ -114,12 +114,13 @@ export class PayController {
         }
         const { elements, payerId } = req.body
         const listElements = JSON.parse(elements)
-        const files = req.files
+        let files = req.files
 
         const ids = listElements.map((el:any) => el.id)
 
         if (!files || Object.keys(files).length === 0) {
-            return res.status(400).json({error: 'No se ha encontrado ningún archivo.'})
+            files = {}
+            // return res.status(400).json({error: 'No se ha encontrado ningún archivo.'})
         }
         
         let payerReq: Payer
@@ -190,14 +191,13 @@ export class PayController {
     }
     
     receiveWebhook = async (req: Request, res: Response) => {
-        res.sendStatus(200)
+        // res.sendStatus(200)
 
-        console.log("first")
         try {
             const query = req?.query
             if (query?.type === "payment") {
                 let paymentMP: PaymentResponse
-                // let payerReq: Payer
+                let payerReq: Payer
                 return this.paymentService
                     .getPayment(query['data.id'] as string)
                     .then(payment =>{
@@ -220,31 +220,31 @@ export class PayController {
                         return new GetPayerById(this.payerService)
                             .execute(pay.payerId)
                     })
-                    // .then(payer =>{
-                    //     if(payer){
-                    //         payerReq = payer
-                    //         let from = 'The Geek Theory <ssebastiang97@gmail.com>'
-                    //         let subject = "Hello ✔"
-                    //         let text = "Hello world?"
-                    //         return new SendConfirmation(this.mailService)
-                    //             .execute(
-                    //                 from,
-                    //                 payer.email, 
-                    //                 subject, 
-                    //                 text, 
-                    //                 HTML
-                    //             )
-                    //     }
-                    //     throw new Error("No se encontro el payer")
-                    // })
-                    // .then(_ =>{
-                    //     return  new SendMessage(this.whatsappService)
-                    //         .execute(
-                    //             payerReq.phone.toString(), 
-                    //             "tu compra se ha completado"
-                    //         )
+                    .then(payer =>{
+                        if(payer){
+                            payerReq = payer
+                            let from = 'The Geek Theory <ssebastiang97@gmail.com>'
+                            let subject = "Hello ✔"
+                            let text = "Hello world?"
+                            return new SendConfirmation(this.mailService)
+                                .execute(
+                                    from,
+                                    payer.email, 
+                                    subject, 
+                                    text, 
+                                    HTML
+                                )
+                        }
+                        throw new Error("No se encontro el payer")
+                    })
+                    .then(_ =>{
+                        return  new SendMessage(this.whatsappService)
+                            .execute(
+                                payerReq.phone.toString(), 
+                                "tu compra se ha completado 😊💖"
+                            )
                         
-                    // })
+                    })
                     .then(_=>{
                         res.sendStatus(200)
                     })
@@ -260,7 +260,6 @@ export class PayController {
             console.log({ error })
             return res.sendStatus(400)
         }
-        return
     }
 
     success = (_: Request, __: Response,) => {

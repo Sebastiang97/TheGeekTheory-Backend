@@ -8,7 +8,8 @@ export class GetProductPayByPayId {
 
     execute(payId: string): Promise<ProductPay[]>{
         return this.productsPayService.findByProp({
-            where: {payId}
+            where: {payId},
+            include: {urlImage: true}
         })
     }
 }

@@ -1,5 +1,5 @@
 import { Client } from "whatsapp-web.js"
-// import qrcode from 'qrcode-terminal'
+import qrcode from 'qrcode-terminal'
 export const client = new Client({});
 
 client.once('ready', () => {
@@ -13,8 +13,8 @@ client.once('ready', () => {
 //     }
 // })
 
-// client.on('qr', (qr) => {
-//     qrcode.generate(qr, {small: true});
-// })
+client.on('qr', (qr) => {
+    qrcode.generate(qr, {small: true});
+})
 
-// client.initialize()
+client.initialize()
