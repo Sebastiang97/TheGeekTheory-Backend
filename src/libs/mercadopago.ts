@@ -13,9 +13,9 @@ export class PaymentService {
         items: items,
         notification_url: process.env.URL_DEV_TUNNEL + "/api/pay/receiveWebhook",
         back_urls: {
-          success: "http://localhost:5173/pay/mercadopago?payId="+pay.id,
-          pending: process.env.URL_DEV_TUNNEL + "/api/payment/pending",
-          failure: process.env.URL_DEV_TUNNEL + "/api/payment/failure",
+          success: process.env.URL_FRONT +"/pay/mercadopago?payId="+pay.id,
+          pending: process.env.URL_FRONT + "/api/payment/pending",
+          failure: process.env.URL_FRONT + "/api/payment/failure",
         },
         payer: {
           name: payer.name,
