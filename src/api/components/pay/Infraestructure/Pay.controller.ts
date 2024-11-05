@@ -238,6 +238,7 @@ export class PayController {
                         throw new Error("No se encontro el payer")
                     })
                     .then(_ =>{
+                        console.log("whatsapp")
                         return  new SendMessage(this.whatsappService)
                             .execute(
                                 payerReq.phone.toString(), 
@@ -246,14 +247,15 @@ export class PayController {
                         
                     })
                     .then(_=>{
-                        res.sendStatus(200)
+                        console.log("whatsapp enviado")
+                        return res.sendStatus(200)
                     })
                     .catch(err => {
                         console.log(err)
-                        res.sendStatus(400)
+                        return res.sendStatus(400)
                     })
             }else{
-                res.sendStatus(200)
+                return res.sendStatus(200)
             }
 
         } catch (error) {
