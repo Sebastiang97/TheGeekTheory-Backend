@@ -86,6 +86,8 @@ export class PayRoutes{
         router.post("/failure", paymentController.failure)
 
         router.put("/:id", paymentController.update)
+        
+        router.put("/numberGuide/:payId", paymentController.updateNumberGuide)
 
         router.delete("/:id", paymentController.delete)
 

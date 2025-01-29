@@ -12,6 +12,7 @@ export class Pay extends BaseEntity{
         public payerId:string,
         public payer?:Payer,
         public productsPay?:ProductPay[],
+        public numberGuide?: string
     ){
         super(id)
     }

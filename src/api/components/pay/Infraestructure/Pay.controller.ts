@@ -31,6 +31,7 @@ import { GET_NEXT_PREVIOUS_CURSOR, GET_PAGINATION_QUERY } from "../../../../util
 import { SendConfirmation } from "../../mailService/Application/SendMail";
 import { HTML } from "../../user/Infraestructure/templateHTML";
 import { SendMessage } from "../../whatsapp/Application/SendMessage";
+import { productNumberGuideDTOSchema } from "./SchemaValidation/productNumberGuideDTOSchema";
 
 export class PayController {
     constructor(
@@ -283,6 +284,51 @@ export class PayController {
 
     update = (_: Request, __: Response,) => {
         return
+
+    }
+
+    updateNumberGuide = (req: Request, res: Response,) => {
+        const {payId} = req.params
+        const payDTOReq = req.body
+
+        const result = productNumberGuideDTOSchema.safeParse(payDTOReq)
+        if(!result.success){
+            return res.status(400).json({error:result.error.issues})
+        }
+
+        
+        return new GetPayById(this.service)
+            .execute(payId)
+            .then(pay =>{
+                return pay
+            })
+            .then(pay =>{
+                console.log(pay)
+                if(pay){
+                    pay.numberGuide = payDTOReq.numberGuide
+                    return new UpdatePay(this.service)
+                        .execute(pay)
+                }
+                throw new Error("No se encontro el pago")
+            }).then(pay=>{
+                return new GetPayerById(this.payerService)
+                    .execute(pay.payerId)
+            })
+            .then(payer =>{
+                if(payer){
+                    return  new SendMessage(this.whatsappService)
+                        .execute(
+                            payer.phone.toString(), 
+                            "su numero de guia es " + payDTOReq.numberGuide
+                        )
+                }
+                throw new Error("No se encontro el payer")
+            }).then(pay =>{
+                return res.status(200).json(pay)
+            })
+            .catch(err => {
+                return res.status(400).json(err)
+            })
 
     }
 

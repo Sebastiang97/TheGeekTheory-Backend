@@ -3,6 +3,7 @@ import { PayerService } from "../Domain/PayerService";
 import { CreatePayer } from "../Application/CreatePayer";
 import { payerDTOSchema } from "./SchemaValidation/PayerSchema";
 import { UpdatePayer } from "../Application/UpdatePayer";
+import { GetPayersByIdUser } from "../Application/GetPayersByIdUser";
 
 export class PayerController {
     constructor(
@@ -12,6 +13,22 @@ export class PayerController {
 
     list = (_: Request, __: Response, ) => {
         
+    }
+
+    getPayerByIdUser = (req: Request, res: Response, ) => {
+        let user:any = req.user 
+        console.log({ejem: user})
+        if(user && user?.id){
+            return new GetPayersByIdUser(this.service)
+                .execute(user.id)
+                .then(payers=>{
+                    return res.status(200).json(payers)
+                })
+                .catch(error=>{
+                    return res.status(400).json(error)
+                })
+        }
+        return res.status(400).json({payers: []})
     }
 
     getById = (_: Request, __: Response, ) => {

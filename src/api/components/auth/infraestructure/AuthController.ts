@@ -24,14 +24,17 @@ export class AuthController {
     
 
     getFailure = (_: Request, res: Response) =>{
-        res.send("wrong")
+        return res.send("wrong")
     }
 
     getProtectedSimulate = (req: Request, res: Response) => {
         let user = req.user 
         console.log({user})
+        if(user){
+            return res.status(200).json(user)
+        }
+        return res.status(400).json({user: {}})
         // console.log({session: req.session, sessionId: req.sessionID, cookies: req.cookies})
-        res.status(200).json(user)
     }
 
     getLogout = (req: Request, res: Response) =>{

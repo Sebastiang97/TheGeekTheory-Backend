@@ -102,6 +102,7 @@ model Pay{
   amount            Int
   state             String
   payerId           String
+  numberGuide       String @default("")
   creationDate      DateTime  @default(now())
   updatedAt         DateTime @updatedAt
   payer             Payer @relation(fields: [payerId], references: [id])
@@ -161,6 +162,7 @@ model Payer{
   address           String
   zipCode           String
   detailAddress     String
+  idUser            String @default("")
   creationDate      DateTime @default(now())
   updatedAt         DateTime @updatedAt
   payments          Pay[]

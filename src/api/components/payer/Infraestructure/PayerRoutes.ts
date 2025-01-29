@@ -16,6 +16,8 @@ export class PayerRoutes{
 
         router.get("/", payerController.list)
 
+        router.get("/getPayerByIdUser/", payerController.getPayerByIdUser)
+
         router.get("/:id", payerController.getById)
         
         router.post("/", payerController.create)

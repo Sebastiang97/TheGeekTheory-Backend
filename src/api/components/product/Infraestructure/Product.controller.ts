@@ -120,7 +120,7 @@ export class ProductController {
             })
             .catch(error => {
                 console.log(error)
-                res.status( 400 ).json(error)
+                return res.status( 400 ).json(error)
             })
         
     }

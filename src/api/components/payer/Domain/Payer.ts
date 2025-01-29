@@ -10,6 +10,7 @@ export class Payer extends BaseEntity{
         public address: string,
         public zipCode: string,
         public detailAddress: string,
+        public idUser?: string,
         public payments?: any[],
     ){
         super(id)
