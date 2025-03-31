@@ -6,10 +6,17 @@ export class GetProductPayByPayId {
     constructor(private productsPayService:ProductPayService)
     {}
 
-    execute(payId: string): Promise<ProductPay[]>{
+    execute(
+        payId: string, 
+        includeURLImage:boolean = true,
+        includePrints:boolean = true
+    ): Promise<ProductPay[]>{
         return this.productsPayService.findByProp({
             where: {payId},
-            include: {urlImage: true}
+            include: {
+                urlImage: includeURLImage,
+                printProductPay: includePrints
+            }
         })
     }
 }

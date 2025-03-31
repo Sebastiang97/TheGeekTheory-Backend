@@ -42,8 +42,8 @@ export class PayRoutes{
         const productPayImageRepository = getRepo<ResourceImage>("productPayImage")
         const resourceImageServiceImpl = new ResourceImageServiceImpl(productPayImageRepository)
 
-        const printProductPayImageRepository = getRepo<ResourceImage>("printProductPayImage")
-        const resourceImagePrintServiceImpl = new ResourceImageServiceImpl(printProductPayImageRepository)
+        // const printProductPayImageRepository = getRepo<ResourceImage>("printProductPayImage")
+        // const resourceImagePrintServiceImpl = new ResourceImageServiceImpl(printProductPayImageRepository)
 
         const printProductPayRepository = getRepo<PrintProductPay>("printProductPay")
         const printProductPayServiceImpl = new PrintProductPayServiceImpl(printProductPayRepository)
@@ -60,7 +60,7 @@ export class PayRoutes{
             productPayServiceImpl,
             resourceImageServiceImpl,
             printProductPayServiceImpl,
-            resourceImagePrintServiceImpl,
+            // resourceImagePrintServiceImpl,
             whatsappServiceImpl,
             mailServiceImpl
         )

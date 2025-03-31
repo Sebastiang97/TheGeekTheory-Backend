@@ -5,14 +5,14 @@ export class GetProductsById {
     constructor(private productService:ProductService)
     {}
 
-    execute(ids: string[]): Promise<Product[]>{
+    execute(ids: string[], includeURLImage:boolean = true): Promise<Product[]>{
         return this.productService.findAll({
             where: {
                 id: {
                   in: ids
                 }
             },
-            include: {urlImage: true}
+            include: {urlImage: includeURLImage}
         })
     }
 }

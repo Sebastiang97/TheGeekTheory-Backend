@@ -12,6 +12,7 @@ export class ProductPay extends BaseEntity{
         public typeStamping:string,
         public quantity: number,
         public payId: string,
+        public productId: string,
         public urlImage?: ResourceImage[],
         public print?: any
     ){

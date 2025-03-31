@@ -32,6 +32,10 @@ import { SendConfirmation } from "../../mailService/Application/SendMail";
 import { HTML } from "../../user/Infraestructure/templateHTML";
 import { SendMessage } from "../../whatsapp/Application/SendMessage";
 import { productNumberGuideDTOSchema } from "./SchemaValidation/productNumberGuideDTOSchema";
+import { GetProductPayByPayId } from "../../productsPay/Application/GetProductPayByPayId";
+import { SubtractProductByQuantity } from "../../product/Application/SubtractProductByQuantity";
+import { ProductPay } from "../../productsPay/Domain/ProductPay";
+import { UpdateProducts } from "../../product/Application/UpdateProducts";
 
 export class PayController {
     constructor(
@@ -42,7 +46,7 @@ export class PayController {
         private productPayService: ProductPayService,
         private resourceImageService: ResourceImageService,
         private printProductPayService: PrintProductPayService,
-        private resourceImagePrintService: ResourceImageService,
+        // private resourceImagePrintService: ResourceImageService,
         private whatsappService: WhatsappService,
         private mailService: MailService,
     ) {
@@ -113,16 +117,17 @@ export class PayController {
         if(!req.body){
             return res.status(400).json("no se ha enviado productos")
         }
-        const { elements, payerId } = req.body
+        const { elements, payerId, prints } = req.body
         const listElements = JSON.parse(elements)
+        const printsProductPay = JSON.parse(prints)
         let files = req.files
-
         const ids = listElements.map((el:any) => el.id)
 
         if (!files || Object.keys(files).length === 0) {
             files = {}
             // return res.status(400).json({error: 'No se ha encontrado ningún archivo.'})
         }
+        console.log({elements, files, printsProductPay})
         
         let payerReq: Payer
         let products: Product[]
@@ -156,8 +161,8 @@ export class PayController {
                         this.productPayService,
                         this.resourceImageService,
                         this.printProductPayService,
-                        this.resourceImagePrintService
-                    ).execute(products, pay.id, listElements, files)
+                        // this.resourceImagePrintService
+                    ).execute(products, pay.id, listElements, files, printsProductPay)
             })
             .then(productsPay => {
                 console.log({productsPay})
@@ -199,6 +204,8 @@ export class PayController {
             if (query?.type === "payment") {
                 let paymentMP: PaymentResponse
                 let payerReq: Payer
+                let payId: string = ""
+                let productsPay: ProductPay[] = []
                 return this.paymentService
                     .getPayment(query['data.id'] as string)
                     .then(payment =>{
@@ -209,6 +216,7 @@ export class PayController {
                     })
                     .then(pay => {
                         if(pay){
+                            payId = pay.id
                             pay.state = paymentMP.status || "NOT_RESPONSE"
                             pay.paymentId = paymentMP?.id?.toString() || ""
                             console.log({pay})
@@ -246,6 +254,28 @@ export class PayController {
                                 "tu compra se ha completado 😊💖"
                             )
                         
+                    })
+                    .then(_ =>{
+                        return new GetProductPayByPayId(this.productPayService)
+                            .execute(payId, false)
+                        
+                    })
+                    .then(productsPayReq=>{
+                        productsPay= productsPayReq
+                        let ids:string[] = []
+                        productsPay.forEach((item) => {
+                            ids.push(item.id)
+                        })
+                        return new GetProductsById(this.productService)
+                            .execute(ids, false)
+                    })
+                    .then(products=>{
+                        return new SubtractProductByQuantity()
+                            .execute(products, productsPay)
+                    })
+                    .then(productsUpdated=>{
+                        return new UpdateProducts(this.productService)
+                            .execute(productsUpdated)
                     })
                     .then(_=>{
                         console.log("whatsapp enviado")

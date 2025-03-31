@@ -1,30 +1,40 @@
 import { CreateResourceImage } from "../../common/Application/CreateResourceImage";
 import { ResourceImage } from "../../common/Domain/ResourceImage";
 import { ResourceImageService } from "../../common/Domain/ResourceImageService";
-import { CreatePrintProductPay } from "../../printProductPay/Application/CreatePrintProductPay";
+// import { CreatePrintProductPay } from "../../printProductPay/Application/CreatePrintProductPay";
 import { PrintProductPay } from "../../printProductPay/Domain/PrintProductPay";
 import { PrintProductPayService } from "../../printProductPay/Domain/PrintProductPayService";
 import { ProductPay } from "../Domain/ProductPay";
-import { FileArray } from "express-fileupload";
+import { FileArray, UploadedFile } from "express-fileupload";
 import { ProductPayService } from "../Domain/ProductPayService";
 import { CreateProductsPay } from "./CreateProductPay";
 import { ProductPayDTO } from "../Infraestructure/Resource/req/ProductPayDTO";
 import { Product } from "../../product/Domain/Product";
 import { MapperProductToProductPay } from "./MapperProductToProductPay";
+import { PrintProductPayDTO } from "../Infraestructure/Resource/req/PrintProductPayDTO";
+import { CreatePrintsProductPay } from "../../printProductPay/Application/CreatePrintsProductPay";
 
 export class CreateProductsPayWithResourceAndPrint {
     constructor( 
         private productPayService: ProductPayService,
         private resourceImageService: ResourceImageService,
         private printProductPayService: PrintProductPayService,
-        private resourceImagePrintService: ResourceImageService,
+        // private resourceImagePrintService: ResourceImageService,
     )
     {}
 
-    execute(products: Product[], payId:string, productsPayReq: ProductPayDTO[], files: FileArray): Promise<ProductPay[]>{
+    execute(
+        products: Product[], 
+        payId:string, 
+        productsPayReq: ProductPayDTO[], 
+        files: FileArray,
+        printProductPayDTO: PrintProductPayDTO[]
+    ): Promise<ProductPay[]>{
         const res = products.map( async product =>{
-
-            let printProductPay: PrintProductPay = {} as PrintProductPay 
+            let p: PrintProductPayDTO = printProductPayDTO.filter(p=>p.idProduct == product.id)[0]
+            let printProductPayFiltered: any = p?.print ? p.print : []
+            let imagesUpload:string[] = []
+            
             let resourceImage: ResourceImage[] = []
             const productPayReq = productsPayReq.filter(dto => dto.id === product.id)
             let productPay = new MapperProductToProductPay().execute(product, productPayReq[0], payId)
@@ -38,46 +48,47 @@ export class CreateProductsPayWithResourceAndPrint {
                 }) 
                 : []
             delete productPay.urlImage 
+            productPay.productId = product.id
 
-            
             return new CreateProductsPay(this.productPayService)
                 .execute(productPay)
                 .then(productPayRes=>{
                     productPay = productPayRes
                     return new CreateResourceImage(this.resourceImageService)
                         .executeWithResourceImage(urlImage, {productPayId: productPay.id})
-                }).then(resourceImageRes=>{
-                    resourceImage = resourceImageRes
+                }).then(urlImage =>{
+                    console.log({urlImage})
+                    resourceImage = urlImage
                     const key = "file["+product.id+"]"
                     if(files[key]){
-                        return new CreatePrintProductPay(this.printProductPayService)
-                            .execute({
-                                name: "string",
-                                author: "string",
-                                productPayId: productPay.id
-                            } as PrintProductPay)
-                    }
-                    return {} as PrintProductPay
-                }).then(printProductPayRes =>{
-                    if(Object.keys(printProductPay).length){
-                        printProductPay = printProductPayRes
-                        const key = "file["+product.id+"]"
-                        if(files[key]){
-                            const fileArray = {
-                                file: files[key],
-                            };
-                            return this.resourceImageService.uploadImages(fileArray)
-                        }   
-                    }
+                        const fileArray = {
+                            file: files[key],
+                        };
+                        return this.resourceImageService.uploadImages(fileArray)
+                    }   
                     return []
                 }).then(images=>{
                     console.log({images})
-                    if(images.length){
-                        return new CreateResourceImage(this.resourceImagePrintService)
-                            .execute (images, {printProductPayId: printProductPay.id})
+                    imagesUpload = images
+                    const key = "file["+product.id+"]"
+                    if(files[key]){
+                        console.log({key})
+                        const fileArray = {
+                            file: files[key],
+                        };
+                        let imagesArray: UploadedFile[] = Array.isArray(fileArray?.file) ? fileArray.file : [fileArray?.file]
+                        
+                        printProductPayFiltered.map((print:any)=>{
+                            const index = imagesArray.findIndex((file:any) => file.name.startsWith(print.position)); 
+                            print.url = imagesUpload[index]
+                        })
+                        console.log({printProductPayFiltered})
+                        return new CreatePrintsProductPay(this.printProductPayService)
+                            .execute(printProductPayFiltered, productPay.id)
                     }
-                    return []
-                }).then(_ =>{
+                    return [] as PrintProductPay[]
+                }).then(printProductPay =>{
+                    console.log({printProductPay})
                     return {
                         ...productPay,
                         urlImage: resourceImage,

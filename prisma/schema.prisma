@@ -120,7 +120,7 @@ model ProductPay {
   quantity           Int
   creationDate       DateTime  @default(now())
   updatedAt          DateTime @updatedAt
-  // productId          String
+  productId          String
   productsPay        Pay? @relation(fields: [payId], references: [id])
   payId              String?
   urlImage           ProductPayImage[]
@@ -134,23 +134,34 @@ model ProductPayImage {
   productPay    ProductPay @relation(fields: [productPayId], references: [id])
   productPayId  String
 }
-
 model PrintProductPay {
   id              String @id @default(uuid())
-  name            String
-  author          String
-  urlImage        PrintProductPayImage[]
+  url                String
+  position           String
+  size               String
   ProductPay      ProductPay? @relation(fields: [productPayId], references: [id])
   productPayId    String?
 }
 
-model PrintProductPayImage {
-  id                 String @id @default(uuid())
-  url                String
-  isMain             Boolean
-  printProductPay    PrintProductPay @relation(fields: [printProductPayId], references: [id])
-  printProductPayId  String
-}
+
+
+// model PrintProductPay {
+//   id              String @id @default(uuid())
+//   name            String
+//   author          String
+//   urlImage        PrintProductPayImage[]
+//   ProductPay      ProductPay? @relation(fields: [productPayId], references: [id])
+//   productPayId    String?
+// }
+
+// model PrintProductPayImage {
+//   id                 String @id @default(uuid())
+//   url                String
+//   position           String
+//   size               String
+//   printProductPay    PrintProductPay @relation(fields: [printProductPayId], references: [id])
+//   printProductPayId  String
+// }
 
 model Payer{
   id                String @id @default(uuid())

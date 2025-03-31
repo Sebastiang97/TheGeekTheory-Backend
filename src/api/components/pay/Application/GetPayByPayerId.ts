@@ -12,6 +12,7 @@ export class GetPayByPayerId {
                 productsPay: {
                     include: {
                       urlImage: true, // Incluir las urlImage de ProductPay
+                      printProductPay: true, // Incluir las urlImage de ProductPay
                     }
                 }
             }
