@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { printSchemaDTO } from "./SchemaValidation/PrintSchema";
-import { FileArray } from "express-fileupload";
+// import { FileArray } from "express-fileupload";
 import { ResourceImageService } from "../../common/Domain/ResourceImageService";
-import { CreateResourceImageTest } from "../../common/Application/CreateResourceImageTest";
+// import { CreateResourceImageTest } from "../../common/Application/CreateResourceImageTest";
 import { PrintProductPayService } from "../Domain/PrintProductPayService";
 import { GetPrintsProductsPay } from "../Application/GetPrintsProductsPay";
-import { CreatePrintProductPay } from "../Application/CreatePrintProductPay";
+// import { CreatePrintProductPay } from "../Application/CreatePrintProductPay";
 import { PrintProductPay } from "../Domain/PrintProductPay";
   
 
@@ -14,6 +14,7 @@ export class ProductController {
         private service: PrintProductPayService,
         private imageService: ResourceImageService,
     ){
+        this.imageService
     }
 
     list = (_: Request, res: Response, ) => {
@@ -46,25 +47,26 @@ export class ProductController {
             return res.status(400).json({error:result.error.issues})
         }
         let print: PrintProductPay = {} as PrintProductPay
-        return new CreatePrintProductPay(this.service)
-            .execute(printReq as PrintProductPay)
-            .then(newPrint=>{
-                print = newPrint
-                return new CreateResourceImageTest(this.imageService)
-                    .execute(
-                        req.files as FileArray, 
-                        {printId: print.id},
-                        req.body.isMain
-                    )
-            })
-            .then(resourceImage=>{
-                print.urlImage = resourceImage
-                return res.status(200).json( print )
-            })
-            .catch(error => {
-                console.log(error)
-                res.status( 400 ).json(error)
-            })
+        return print
+        // return new CreatePrintProductPay(this.service)
+        //     .execute(printReq as PrintProductPay)
+        //     .then(newPrint=>{
+        //         print = newPrint
+        //         return new CreateResourceImageTest(this.imageService)
+        //             .execute(
+        //                 req.files as FileArray, 
+        //                 {printId: print.id},
+        //                 req.body.isMain
+        //             )
+        //     })
+        //     .then(_=>{
+        //         // print.urlImage = resourceImage
+        //         return res.status(200).json( print )
+        //     })
+        //     .catch(error => {
+        //         console.log(error)
+        //         res.status( 400 ).json(error)
+        //     })
         // return new CreatePrint(this.service)
         //     .execute(printReq)
         //     .then(newPrint=>{
