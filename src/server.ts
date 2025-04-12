@@ -33,6 +33,7 @@ export class Server {
         origin: [
           'http://localhost:5173',
           'https://the-geek-theory-frontend.vercel.app',
+          'https://the-geek-theory-frontend-git-feat-4e7831-sebastiang97s-projects.vercel.app/'
         ],
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
