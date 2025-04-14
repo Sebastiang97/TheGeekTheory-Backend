@@ -4,6 +4,7 @@ import { CreatePayer } from "../Application/CreatePayer";
 import { payerDTOSchema } from "./SchemaValidation/PayerSchema";
 import { UpdatePayer } from "../Application/UpdatePayer";
 import { GetPayersByIdUser } from "../Application/GetPayersByIdUser";
+import { GetPayerById } from "../Application/GetPayerById";
 
 export class PayerController {
     constructor(
@@ -31,8 +32,17 @@ export class PayerController {
         return res.status(400).json({payers: []})
     }
 
-    getById = (_: Request, __: Response, ) => {
-        return
+    getById = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        return new GetPayerById(this.service)
+            .execute(id)
+            .then(payer=>{
+                return res.status(200).json(payer)
+            })
+            .catch(error=>{
+                return res.status(400).json(error)
+            })
+            
     }
 
     create = (req: Request, res: Response, ) => {
