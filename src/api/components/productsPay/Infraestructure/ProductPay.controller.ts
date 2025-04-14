@@ -20,8 +20,9 @@ export class ProductPayController {
             .execute(payId)
             .then(productByPay =>{
                 res.status(200).json(productByPay)
-            }).catch(err => {
-                res.status(400).json(err)
+            }).catch(errGetProductPayByPayId => {
+                console.log({errGetProductPayByPayId}) 
+                res.status(400).json(errGetProductPayByPayId)
             })
     }
 
