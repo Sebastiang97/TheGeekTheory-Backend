@@ -12,43 +12,25 @@ datasource db {
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
-model Product {
-  id              String @id @default(uuid())
-  name            String
-  description     String
-  price           Int
-  size            String
-  color           String
-  typeStamping    String
-  quantity        Int
-  subCategoryId   String
-  creationDate    DateTime  @default(now())
-  updatedAt       DateTime @updatedAt
-  subCategory     SubCategory @relation(fields: [subCategoryId], references: [id])
-  categoryId      String
-  category        Category @relation(fields: [categoryId], references: [id])
-  urlImage        ProductImage[]
-}
-
 model Category {
-  id            String @id @default(uuid())
-  name          String
-  creationDate  DateTime  @default(now())
-  updatedAt     DateTime @updatedAt
-  subCategories SubCategory[]
-  products      Product[]
+  id                    String @id @default(uuid())
+  name                  String
+  creationDate          DateTime  @default(now())
+  updatedAt             DateTime @updatedAt
+  subCategories         SubCategory[]
+  generalProducts       GeneralProduct[]
 }
 
 model SubCategory {
-  id            String @id @default(uuid())
-  name          String
-  code          String
-  categoryId    String 
-  creationDate  DateTime  @default(now())
-  updatedAt     DateTime @updatedAt
-  category      Category @relation(fields: [categoryId], references: [id])
-  products      Product[]
-  urlImage      SubCategoryImage[]
+  id                    String @id @default(uuid())
+  name                  String
+  code                  String
+  categoryId            String 
+  creationDate          DateTime  @default(now())
+  updatedAt             DateTime @updatedAt
+  category              Category @relation(fields: [categoryId], references: [id])
+  products              GeneralProduct[]
+  // urlImage              SubCategoryImage[]
 }
 
 model Print {
@@ -68,18 +50,18 @@ model PrintImage {
 
 
 model ProductImage {
-  id         String @id @default(uuid())
-  url        String
-  product    Product @relation(fields: [productId], references: [id])
-  productId  String
+  id                    String @id @default(uuid())
+  url                   String
+  product               Product @relation(fields: [productId], references: [id])
+  productId             String
 }
 
-model SubCategoryImage {
-  id              String @id @default(uuid())
-  url             String
-  subCategory     SubCategory   @relation(fields: [subCategoryId], references: [id])
-  subCategoryId   String
-}
+// model SubCategoryImage {
+//   id              String @id @default(uuid())
+//   url             String
+//   subCategory     SubCategory   @relation(fields: [subCategoryId], references: [id])
+//   subCategoryId   String
+// }
 
 
 model User {
@@ -177,4 +159,78 @@ model Payer{
   creationDate      DateTime @default(now())
   updatedAt         DateTime @updatedAt
   payments          Pay[]
+}
+
+model Product {
+  id                String @id @default(uuid())
+  title             String
+  description       String
+  size              String
+  color             String
+  typeStamping      String
+  quantity          Int
+  isVisible         Boolean
+  creationDate      DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  subCategoryId     String
+  categoryId        String
+  generalProductId  String
+  generalProducts   GeneralProduct @relation(fields: [generalProductId], references: [id])
+  urlImage          ProductImage[]
+}
+
+model GeneralProduct {
+  id                String @id @default(uuid())
+  title              String
+  description       String
+  price             Int
+  quantity          Int?
+  creationDate      DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  subCategoryId     String
+  categoryId        String
+  isVisible         Boolean 
+  subCategory       SubCategory @relation(fields: [subCategoryId], references: [id])
+  category          Category @relation(fields: [categoryId], references: [id])
+  products          Product[]
+  tags              ProductTag[]
+  colorImageSize    ColorGeneralProduct[]
+}
+
+model ColorGeneralProduct{
+  id                    String @id @default(uuid())
+  genreralProduct       GeneralProduct?  @relation(fields: [genreralProductId], references: [id])
+  genreralProductId     String
+  colorsImages          ColorImage[]
+}
+
+model ColorImage{
+  id                    String               @id @default(uuid())
+  color                 String
+  image                 String
+  colorGeneralProductId String
+  colorGeneralProduct   ColorGeneralProduct  @relation(fields: [colorGeneralProductId], references: [id])
+  size                  ColorImageSize[]
+}
+
+model ColorImageSize{
+  id                    String       @id @default(uuid())
+  size                  String
+  colorImage            ColorImage   @relation(fields: [colorIamgeId], references: [id])
+  colorIamgeId          String
+}
+
+model Tag{
+  id                String @id @default(uuid())
+  name              String
+  displayName       String
+  products          ProductTag[]
+}
+
+model ProductTag{
+  id                String    @id @default(uuid())
+  product           GeneralProduct?  @relation(fields: [productId], references: [id])
+  productId         String
+  tag               Tag?      @relation(fields: [tagId], references: [id])
+  tagId             String
 }

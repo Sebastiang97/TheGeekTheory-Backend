@@ -7,7 +7,7 @@
     "dev": "ts-node-dev src/index.ts",
     "start": "node build/index.js",
     "show:db": "npx prisma studio",
-    "seed": "ts-node src/store/prisma/seed.ts",
+    "seed": "ts-node src/store/prisma/seed2.ts",
     "truncate": "ts-node src/store/prisma/truncate.ts",
     "build": "tsc"
   },
