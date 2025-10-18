@@ -8,6 +8,10 @@ import { ColorImageService } from "../../common/Domain/ColorImageService";
 import { ColorImageSizeService } from "../../common/Domain/ColorImageSizeService";
 import { CreateColorImage } from "../../common/Application/CreateColorImage";
 import { CreateColorImageSize } from "../../common/Application/CreateColorImageSize";
+import { CreateResourceImage } from "../../common/Application/CreateResourceImage";
+import { ResourceImageService } from "../../common/Domain/ResourceImageService";
+import { FileArray } from "express-fileupload";
+import { GetProductByGPId } from "../Application/GetProductByGPId";
 
 
   
@@ -17,34 +21,58 @@ export class ProductIndividualController {
         private service: ProductService,
         private colorGeneralProductService: ColorGeneralProductService,
         private colorImageService: ColorImageService,
-        private colorImageSizeService: ColorImageSizeService
+        private colorImageSizeService: ColorImageSizeService,
+        private imageService: ResourceImageService,
+        
     ){
+
     }
 
     list = (_: Request, __: Response, ) => {
         
     }
 
-    getById = (_: Request, __: Response, ) => {
+    getProductById = (_: Request, __: Response, ) => {
         return
+    }
+
+    getProductByGPId = (req: Request, res: Response, ) => {
+        const {gPId} = req.params
+        return new GetProductByGPId(this.service)
+            .execute(gPId)
+            .then(product=>{
+                return res.status( 200 ).json(product)
+            })
+            .catch(error => {
+                console.log(error)
+                return res.status( 400 ).json(error)
+            })
     }
 
     create = (req: Request, res: Response, ) => { 
         // imgMain:Array(1)0:"blob:http://localhost:5173/5d91bc9b-e62e-420c-b585-d47c6763bd03"length:1[[Prototype]]:Array(0)
         // imgSecond:Array(2)0:"blob:http://localhost:5173/56d195a9-fb96-46c2-a03d-05c89ecca566"1:"blob:http://localhost:5173/c0b33adb-e228-402d-b33b-aaf958d40af1"length:2[[Prototype]]:Array(0)
-        console.log({
-            body: req.body,
-            files: req.files,
-            msg: "ProductIndividualController"
-        })
         let product = req.body
         // product.price = parseFloat(req.body.price)
         product.quantity = parseFloat(req.body.quantity)
         product.isVisible = Boolean(product.isVisible)
+        let fileImgSecond: FileArray = {}
+        let fileImgMain: FileArray = {}
 
         if (!req.files || Object.keys(req.files).length === 0) {
             return res.status(400).json({error: 'No se ha encontrado ningún archivo.'})
         }else{
+            console.log({
+                body: req.body,
+                files: req.files,
+                fileImgMain: req.files['file[imgMain]'],
+                fileImgSecond: req.files['file[imgSecond]'],
+                msg: "ProductIndividualController"
+            })
+            fileImgSecond["file"] =  req.files['file[imgSecond]']
+            fileImgMain["file"] =  req.files['file[imgMain]']
+             
+             
             // let imagesArray: any[] = Array.isArray(req.files?.file) ? req.files.file : [req.files?.file]
             
             // imagesArray.forEach(file => {
@@ -54,15 +82,15 @@ export class ProductIndividualController {
 
         
         let ColorGeneralProduct = {
-            genreralProductId: product.generalProductId
+            generalProductId: product.generalProductId
         }
         
-        let colorImage = {
+        let colorImage: any = {
             color: product.color,
             image: ""
         }
 
-        let colorImageSize = {
+        let colorImageSize:any = {
             size: product.size
         }
         
@@ -70,26 +98,45 @@ export class ProductIndividualController {
         if(!result.success){
             return res.status(400).json({error:result.error.issues})
         }
-        let newProduct = {}
+        let newProduct:any = {}
+        let images: string[] = []
         return new CreateIndividualProduct(this.service)
             .execute(product)
             .then(product =>{
                 newProduct = product
+                console.log({product})
+                return this.imageService.uploadImages(fileImgMain as FileArray)
+            })
+            .then(imgMain=>{
+                colorImage.image = imgMain[0]
+                images = imgMain
+                return this.imageService.uploadImages(fileImgSecond as FileArray)
+            })
+            .then(uploadResult => {
+                images.concat(uploadResult)
+                console.log({images})
+                return new CreateResourceImage(this.imageService)
+                    .execute(images, {productId: newProduct.id})
+            })
+            .then(resourceImage=>{
+                resourceImage
                 return new CreateColorGeneralProduct(this.colorGeneralProductService)
                     .execute(ColorGeneralProduct as any)
             })
             .then(colorGeneralProduct =>{
-                console.log(colorGeneralProduct)
+                console.log({colorGeneralProduct})
+                colorImage.colorGeneralProductId = colorGeneralProduct.id
                 return new CreateColorImage(this.colorImageService)
                     .execute(colorImage as any)
             })
             .then(colorImage =>{
-                console.log(colorImage)
+                console.log({colorImage})
+                colorImageSize.colorImageId = colorImage.id
                 return new CreateColorImageSize(this.colorImageSizeService)
                     .execute(colorImageSize as any)
             })
             .then(colorImage =>{
-                console.log(colorImage)
+                console.log({colorImage})
                 return res.status(200).json(newProduct)
             })
             .catch(err => {

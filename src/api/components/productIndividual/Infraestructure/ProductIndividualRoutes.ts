@@ -9,6 +9,8 @@ import { ColorImageSizeServiceImpl } from "../../common/Infrastructure/ColorImag
 import { ColorGeneralProduct } from "../../common/Domain/ColorGeneralProduct";
 import { ColorImage } from "../../common/Domain/ColorImage";
 import { ColorImageSize } from "../../common/Domain/ColorImageSize";
+import { ResourceImageServiceImpl } from "../../common/Infrastructure/ResourceImageServiceImpl";
+import { ResourceImage } from "../../common/Domain/ResourceImage";
 
 export class ProductIndividualRoutes{
     static get routes(): Router {
@@ -21,18 +23,26 @@ export class ProductIndividualRoutes{
         const colorGeneralProductServiceImpl = new ColorGeneralProductServiceImpl(colorGeneralProductRepository)
         const colorImageServiceImpl = new ColorImageServiceImpl(colorImageRepository)
         const colorImageSizeServiceImpl = new ColorImageSizeServiceImpl(colorImageSizeRepository)
+        const productImageRepository = getRepo<ResourceImage>("productImage")
         
+        const productImageServiceImpl = new ResourceImageServiceImpl(productImageRepository)
+
         const productController = new ProductIndividualController(
             productServiceImpl,
             colorGeneralProductServiceImpl,
             colorImageServiceImpl,
-            colorImageSizeServiceImpl
+            colorImageSizeServiceImpl,
+            productImageServiceImpl
         )
         
 
         router.get("/", productController.list)
 
         router.post("/", productController.create)
+
+        router.get("/getProductById/:id", productController.getProductById)
+        
+        router.get("/getProductByGPId/:gPId", productController.getProductByGPId)
         
         
         return router

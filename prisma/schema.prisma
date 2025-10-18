@@ -177,6 +177,8 @@ model Product {
   generalProductId  String
   generalProducts   GeneralProduct @relation(fields: [generalProductId], references: [id])
   urlImage          ProductImage[]
+  // Restricción única compuesta para evitar duplicados
+  @@unique([generalProductId, size, color], name: "product_unique_size_color")
 }
 
 model GeneralProduct {
@@ -199,8 +201,8 @@ model GeneralProduct {
 
 model ColorGeneralProduct{
   id                    String @id @default(uuid())
-  genreralProduct       GeneralProduct?  @relation(fields: [genreralProductId], references: [id])
-  genreralProductId     String
+  generalProduct       GeneralProduct?  @relation(fields: [generalProductId], references: [id])
+  generalProductId     String
   colorsImages          ColorImage[]
 }
 
@@ -216,8 +218,9 @@ model ColorImage{
 model ColorImageSize{
   id                    String       @id @default(uuid())
   size                  String
-  colorImage            ColorImage   @relation(fields: [colorIamgeId], references: [id])
-  colorIamgeId          String
+  colorImage            ColorImage   @relation(fields: [colorImageId], references: [id])
+  colorImageId          String
+  @@unique([colorImageId, size], name: "colorimagesize_unique_size")
 }
 
 model Tag{

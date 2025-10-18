@@ -20,9 +20,9 @@ export class GeneralProductRoutes{
 
         router.get("/", generalProductController.list)
 
-        router.get("/:id", generalProductController.getById)
+        router.get("/getGPById/:id", generalProductController.getById)
         
-        router.get("/subcategoryid/:subCategoryId", generalProductController.getBySubCategoryId)
+        router.get("/getGPSubCategoryId/:subCategoryId", generalProductController.getBySubCategoryId)
 
         router.post("/", generalProductController.create)
 
