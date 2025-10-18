@@ -1,22 +1,4 @@
 -- CreateTable
-CREATE TABLE "Product" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "price" INTEGER NOT NULL,
-    "size" TEXT NOT NULL,
-    "color" TEXT NOT NULL,
-    "typeStamping" TEXT NOT NULL,
-    "quantity" INTEGER NOT NULL,
-    "subCategoryId" TEXT NOT NULL,
-    "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "categoryId" TEXT NOT NULL,
-
-    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -61,19 +43,9 @@ CREATE TABLE "PrintImage" (
 CREATE TABLE "ProductImage" (
     "id" TEXT NOT NULL,
     "url" TEXT NOT NULL,
-    "isMain" BOOLEAN NOT NULL,
     "productId" TEXT NOT NULL,
 
     CONSTRAINT "ProductImage_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "SubCategoryImage" (
-    "id" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "subCategoryId" TEXT NOT NULL,
-
-    CONSTRAINT "SubCategoryImage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -100,6 +72,7 @@ CREATE TABLE "Pay" (
     "amount" INTEGER NOT NULL,
     "state" TEXT NOT NULL,
     "payerId" TEXT NOT NULL,
+    "numberGuide" TEXT NOT NULL DEFAULT '',
     "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -118,6 +91,7 @@ CREATE TABLE "ProductPay" (
     "quantity" INTEGER NOT NULL,
     "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "productId" TEXT NOT NULL,
     "payId" TEXT,
 
     CONSTRAINT "ProductPay_pkey" PRIMARY KEY ("id")
@@ -127,7 +101,6 @@ CREATE TABLE "ProductPay" (
 CREATE TABLE "ProductPayImage" (
     "id" TEXT NOT NULL,
     "url" TEXT NOT NULL,
-    "isMain" BOOLEAN NOT NULL,
     "productPayId" TEXT NOT NULL,
 
     CONSTRAINT "ProductPayImage_pkey" PRIMARY KEY ("id")
@@ -136,21 +109,12 @@ CREATE TABLE "ProductPayImage" (
 -- CreateTable
 CREATE TABLE "PrintProductPay" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "author" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "position" TEXT NOT NULL,
+    "size" TEXT NOT NULL,
     "productPayId" TEXT,
 
     CONSTRAINT "PrintProductPay_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "PrintProductPayImage" (
-    "id" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "isMain" BOOLEAN NOT NULL,
-    "printProductPayId" TEXT NOT NULL,
-
-    CONSTRAINT "PrintProductPayImage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -164,17 +128,98 @@ CREATE TABLE "Payer" (
     "address" TEXT NOT NULL,
     "zipCode" TEXT NOT NULL,
     "detailAddress" TEXT NOT NULL,
+    "idUser" TEXT NOT NULL DEFAULT '',
     "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Payer_pkey" PRIMARY KEY ("id")
 );
 
--- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_subCategoryId_fkey" FOREIGN KEY ("subCategoryId") REFERENCES "SubCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateTable
+CREATE TABLE "Product" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "size" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "typeStamping" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "isVisible" BOOLEAN NOT NULL,
+    "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "subCategoryId" TEXT NOT NULL,
+    "categoryId" TEXT NOT NULL,
+    "generalProductId" TEXT NOT NULL,
 
--- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "GeneralProduct" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "price" INTEGER NOT NULL,
+    "quantity" INTEGER,
+    "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "subCategoryId" TEXT NOT NULL,
+    "categoryId" TEXT NOT NULL,
+    "isVisible" BOOLEAN NOT NULL,
+
+    CONSTRAINT "GeneralProduct_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ColorGeneralProduct" (
+    "id" TEXT NOT NULL,
+    "generalProductId" TEXT NOT NULL,
+
+    CONSTRAINT "ColorGeneralProduct_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ColorImage" (
+    "id" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
+    "colorGeneralProductId" TEXT NOT NULL,
+
+    CONSTRAINT "ColorImage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ColorImageSize" (
+    "id" TEXT NOT NULL,
+    "size" TEXT NOT NULL,
+    "colorImageId" TEXT NOT NULL,
+
+    CONSTRAINT "ColorImageSize_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Tag" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "displayName" TEXT NOT NULL,
+
+    CONSTRAINT "Tag_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ProductTag" (
+    "id" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
+    "tagId" TEXT NOT NULL,
+
+    CONSTRAINT "ProductTag_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Product_generalProductId_size_color_key" ON "Product"("generalProductId", "size", "color");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ColorImageSize_colorImageId_size_key" ON "ColorImageSize"("colorImageId", "size");
 
 -- AddForeignKey
 ALTER TABLE "SubCategory" ADD CONSTRAINT "SubCategory_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -184,9 +229,6 @@ ALTER TABLE "PrintImage" ADD CONSTRAINT "PrintImage_printId_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "ProductImage" ADD CONSTRAINT "ProductImage_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "SubCategoryImage" ADD CONSTRAINT "SubCategoryImage_subCategoryId_fkey" FOREIGN KEY ("subCategoryId") REFERENCES "SubCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pay" ADD CONSTRAINT "Pay_payerId_fkey" FOREIGN KEY ("payerId") REFERENCES "Payer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -201,4 +243,25 @@ ALTER TABLE "ProductPayImage" ADD CONSTRAINT "ProductPayImage_productPayId_fkey"
 ALTER TABLE "PrintProductPay" ADD CONSTRAINT "PrintProductPay_productPayId_fkey" FOREIGN KEY ("productPayId") REFERENCES "ProductPay"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PrintProductPayImage" ADD CONSTRAINT "PrintProductPayImage_printProductPayId_fkey" FOREIGN KEY ("printProductPayId") REFERENCES "PrintProductPay"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Product" ADD CONSTRAINT "Product_generalProductId_fkey" FOREIGN KEY ("generalProductId") REFERENCES "GeneralProduct"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GeneralProduct" ADD CONSTRAINT "GeneralProduct_subCategoryId_fkey" FOREIGN KEY ("subCategoryId") REFERENCES "SubCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GeneralProduct" ADD CONSTRAINT "GeneralProduct_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ColorGeneralProduct" ADD CONSTRAINT "ColorGeneralProduct_generalProductId_fkey" FOREIGN KEY ("generalProductId") REFERENCES "GeneralProduct"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ColorImage" ADD CONSTRAINT "ColorImage_colorGeneralProductId_fkey" FOREIGN KEY ("colorGeneralProductId") REFERENCES "ColorGeneralProduct"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ColorImageSize" ADD CONSTRAINT "ColorImageSize_colorImageId_fkey" FOREIGN KEY ("colorImageId") REFERENCES "ColorImage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductTag" ADD CONSTRAINT "ProductTag_productId_fkey" FOREIGN KEY ("productId") REFERENCES "GeneralProduct"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductTag" ADD CONSTRAINT "ProductTag_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "Tag"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
