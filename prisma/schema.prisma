@@ -225,15 +225,15 @@ model ColorImageSize{
 
 model Tag{
   id                String @id @default(uuid())
-  name              String
+  name              String @unique
   displayName       String
   products          ProductTag[]
 }
 
 model ProductTag{
   id                String    @id @default(uuid())
-  product           GeneralProduct?  @relation(fields: [productId], references: [id])
-  productId         String
+  product           GeneralProduct  @relation(fields: [generalProductId], references: [id])
+  generalProductId  String
   tag               Tag?      @relation(fields: [tagId], references: [id])
   tagId             String
 }

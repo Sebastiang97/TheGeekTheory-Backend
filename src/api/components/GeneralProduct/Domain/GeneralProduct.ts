@@ -1,4 +1,5 @@
 import { BaseEntity } from "../../common/Domain/BaseEntity";
+import { ProductTag } from "../../common/Domain/ProductTag";
 import { ResourceImage } from "../../common/Domain/ResourceImage";
 
 export class GeneralProduct extends BaseEntity{
@@ -13,7 +14,8 @@ export class GeneralProduct extends BaseEntity{
         public quantity          :string,
         public subCategoryId     :string,
         public categoryId        :string,
-        public urlImage         ?:ResourceImage[],
+        public productsTag       :ProductTag[],
+        public urlImage         ?:ResourceImage[]
     ){
         super(id)
     }

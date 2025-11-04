@@ -11,6 +11,7 @@ import { PrintRoutes } from "./api/components/print/Infraestructure/PrintRoutes"
 import { WhatsAppRoutes } from "./api/components/whatsapp/infraestructure/WhatsappRoutes";
 import { GeneralProductRoutes } from "./api/components/GeneralProduct/Infraestructure/GeneralProductRoutes";
 import { ProductIndividualRoutes } from "./api/components/productIndividual/Infraestructure/ProductIndividualRoutes";
+import { TagRoutes } from "./api/components/tag/Infraestructure/TagRoutes";
 
 export class AppRoutes {
 
@@ -21,6 +22,7 @@ export class AppRoutes {
   
       router.use('/api/generalProducts', GeneralProductRoutes.routes );
       router.use('/api/productsIndividual', ProductIndividualRoutes.routes );
+      router.use('/api/tags', TagRoutes.routes );
       router.use('/api/products', ProductRoutes.routes );
       router.use('/api/categories', CategoryRoutes.routes );
       router.use('/api/subcategories', SubCategoryRoutes.routes );

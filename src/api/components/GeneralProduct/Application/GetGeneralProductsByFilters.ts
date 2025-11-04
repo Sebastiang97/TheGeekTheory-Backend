@@ -2,17 +2,15 @@ import { GeneralProduct } from "../Domain/GeneralProduct";
 import { GeneralProductService } from "../Domain/GeneralProductService";
 // import { GeneralProductDTO } from "../Infraestructure/DTO/GeneralProductDTO";
 
-export class GetGeneralProductsById {
+export class GetGeneralProductsByFilters {
     constructor(
         private generalProductService: GeneralProductService,
     ) { }
 
-    async execute(id: string): Promise<GeneralProduct[]> {
+    async execute(query: any): Promise<GeneralProduct[]> {
+       
         return this.generalProductService.findAll({
-            where: {
-                id,
-                isVisible: true
-            },
+            ...query,
             select: {
                 // Seleccionar campos específicos de GeneralProduct
                 id: true,
@@ -26,10 +24,10 @@ export class GetGeneralProductsById {
                 categoryId: true,
                 isVisible: true,
                 tags: {
-                        select: {
-                            tag: true                      
-                        }
-                    },
+                    select: {
+                        tag: true                      
+                    }
+                },
                 // ColorGeneralProduct con toda su jerarquía
                 colorImageSize: {
                     select: {
@@ -49,10 +47,11 @@ export class GetGeneralProductsById {
                         }
                     }
                 }
-            },
-            orderBy: {
-                price: 'asc' // o cualquier otro campo que quieras ordenar
             }
         })
     }
 }
+
+
+
+

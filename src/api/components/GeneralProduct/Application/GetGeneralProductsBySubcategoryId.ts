@@ -34,16 +34,15 @@ export class GetGeneralProductsBySubcategoryId {
                 isVisible: true,
                 // Relaciones
                 
-                // tags: {
-                //     select: {
-                //         id: true,
-                //         name: true
-                //     }
-                // },
+                tags: {
+                    select: {
+                        tag: true                      
+                    }
+                },
                 // ColorGeneralProduct con toda su jerarquía
                 colorImageSize: {
                     select: {
-                        id: true,
+                        // id: true,
                         colorsImages: {
                             select: {
                                 id: true,

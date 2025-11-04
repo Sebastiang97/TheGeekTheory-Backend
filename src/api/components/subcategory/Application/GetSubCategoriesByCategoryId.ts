@@ -10,10 +10,10 @@ export class GetSubCategoriesByCategoryId {
         return this.subCategoryService.findByProp({
             where: {
                 categoryId
-            },
-            include: {
-                urlImage: true
             }
+            // include: {
+            //     urlImage: true
+            // }
         })
     }
 }
