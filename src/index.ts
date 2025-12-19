@@ -22,3 +22,16 @@ function main() {
 
   server.start();
 }
+
+// npm i && 
+// npm run build && 
+// npx prisma generate && 
+// npx prisma migrate reset --force && 
+// npx prisma migrate deploy && 
+// npm run seed
+
+
+// npm i && 
+// npm run build && 
+// npx prisma generate && 
+// npx prisma migrate deploy
