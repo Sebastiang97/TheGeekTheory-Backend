@@ -21,7 +21,9 @@ export const GET_FILTER_PAGINATION_QUERY = ({
         tags: {
             some: {
                 tag: {
-                    displayName: tagName.toLowerCase()
+                    displayName: {
+                        in: [tagName.toLowerCase()]
+                    }
                 }
             }
         }

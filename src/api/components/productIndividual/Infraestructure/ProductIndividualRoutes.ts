@@ -43,7 +43,10 @@ export class ProductIndividualRoutes{
         router.get("/getProductById/:id", productController.getProductById)
         
         router.get("/getProductByGPId/:gPId", productController.getProductByGPId)
-        
+
+        router.put("/:id", productController.update)
+
+        router.delete("/:id", productController.delete)
         
         return router
     }

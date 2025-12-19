@@ -12,6 +12,12 @@ import { CreateResourceImage } from "../../common/Application/CreateResourceImag
 import { ResourceImageService } from "../../common/Domain/ResourceImageService";
 import { FileArray } from "express-fileupload";
 import { GetProductByGPId } from "../Application/GetProductByGPId";
+import { GetProductById } from "../Application/GetProductById";
+import { productIndividualUpdateSchema } from "./SchemaValidation/ProductIndividualUpdateSchema";
+import { UpdateIndividualProduct } from "../Application/UpdateIndividualProduct";
+import { DeleteProductById } from "../Application/DeleteProductById";
+import { DeleteImageAndResourceImage } from "../../common/Application/DeleteImageAndResourceImage";
+import { Product } from "../Domain/Product";
 
 
   
@@ -32,8 +38,17 @@ export class ProductIndividualController {
         
     }
 
-    getProductById = (_: Request, __: Response, ) => {
-        return
+    getProductById = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        return new GetProductById(this.service)
+            .execute(id)
+            .then(product=>{
+                return res.status( 200 ).json(product)
+            })
+            .catch(error => {
+                console.log(error)
+                return res.status( 400 ).json(error)
+            })
     }
 
     getProductByGPId = (req: Request, res: Response, ) => {
@@ -109,12 +124,13 @@ export class ProductIndividualController {
             })
             .then(imgMain=>{
                 colorImage.image = imgMain[0]
-                images = imgMain
+                // images = imgMain
+                images = [...images, ...imgMain]
                 return this.imageService.uploadImages(fileImgSecond as FileArray)
             })
             .then(uploadResult => {
-                images.concat(uploadResult)
-                console.log({images})
+                images = [...images, ...uploadResult]
+                console.log({images, uploadResult})
                 return new CreateResourceImage(this.imageService)
                     .execute(images, {productId: newProduct.id})
             })
@@ -137,6 +153,7 @@ export class ProductIndividualController {
             })
             .then(colorImage =>{
                 console.log({colorImage})
+                newProduct.urlImage = images
                 return res.status(200).json(newProduct)
             })
             .catch(err => {
@@ -146,4 +163,49 @@ export class ProductIndividualController {
         
     }
     
+    update = (req: Request, res: Response, ) => {
+        const {id} = req.params
+
+        let product = {
+            title: req.body.title,
+            quantity: parseFloat(req.body.quantity),
+            description: req.body.description,
+        }
+        
+        const result = productIndividualUpdateSchema.safeParse(product)
+        if(!result.success){
+            return res.status(400).json({error:result.error.issues})
+        }
+        return new UpdateIndividualProduct(this.service)
+            .execute(product, id)
+            .then(product=>{
+                return res.status( 200 ).json(product)
+            })
+            .catch(error => {
+                console.log(error)
+                return res.status( 400 ).json(error)
+            })
+    }
+
+    delete = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        let productsBd: Product[] = []
+        return new GetProductById(this.service)
+            .execute(id)
+            .then(products =>{
+                productsBd = products
+                return new DeleteImageAndResourceImage(this.imageService)
+                    .execute(productsBd[0]?.urlImage)
+            })
+            .then(_=>{
+                return new DeleteProductById(this.service).
+                    execute(productsBd[0].id)
+            })
+            .then(_=>{
+                return res.json( { ok:"ok" } )
+            }).catch(error => {
+                console.log(error)
+                res.status( 400 ).json(error)
+            })
+    }
 }

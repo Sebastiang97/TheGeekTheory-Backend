@@ -1,4 +1,5 @@
 import { BaseEntity } from "../../common/Domain/BaseEntity";
+import { ResourceImage } from "../../common/Domain/ResourceImage";
 
 export class Product extends BaseEntity{
     constructor(
@@ -11,7 +12,8 @@ export class Product extends BaseEntity{
         public quantity          : number,
         public subCategoryId     : string,
         public categoryId        : string,
-        public generalProductId  : string
+        public generalProductId  : string,
+        public urlImage          : ResourceImage[],
     ){
         super(id)
     }
