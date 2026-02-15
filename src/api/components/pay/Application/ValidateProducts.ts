@@ -1,4 +1,4 @@
-import { Product } from "../../product/Domain/Product";
+import { Product } from "../../productIndividual/Domain/Product"
 
 export class ValidateProducts {
     constructor(    )

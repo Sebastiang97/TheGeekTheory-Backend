@@ -8,8 +8,8 @@ import { Pay } from "../Domain/Pay";
 import { PaymentService } from "../../../../libs/mercadopago";
 import { ProductPay } from "../../productsPay/Domain/ProductPay";
 import { ProductPayServiceImpl } from "../../productsPay/Infraestructure/ProductPayServiceImpl";
-import { ProductServiceImpl } from "../../product/Infraestructure/ProductServiceImpl";
-import { Product } from "../../product/Domain/Product";
+import { ProductServiceImpl } from "../../productIndividual/Infraestructure/ProductServiceImpl";
+import { Product } from "../../productIndividual/Domain/Product";
 import { ResourceImage } from "../../common/Domain/ResourceImage";
 import { ResourceImageServiceImpl } from "../../common/Infrastructure/ResourceImageServiceImpl";
 import { WhatsappServiceImpl } from "../../whatsapp/infraestructure/WhatsappServiceImpl";
@@ -19,6 +19,8 @@ import { transporter } from "../../../../store/email/mailer";
 import { Payer } from "../../payer/Domain/Payer";
 import { PrintProductPay } from "../../printProductPay/Domain/PrintProductPay";
 import { PrintProductPayServiceImpl } from "../../printProductPay/Infraestructure/PrintProductPayServiceImpl";
+import { GeneralProductServiceImpl } from "../../GeneralProduct/Infraestructure/GeneralProductServiceImpl";
+import { GeneralProduct } from "../../GeneralProduct/Domain/GeneralProduct";
 
 export class PayRoutes{ 
     static get routes(): Router {
@@ -35,6 +37,9 @@ export class PayRoutes{
 
         const productRepository = getRepo<Product>("product")
         const productServiceImpl = new ProductServiceImpl(productRepository)
+
+         const generalProductRepository = getRepo<GeneralProduct>("generalProduct")
+        const pgeneralProductServiceImpl = new GeneralProductServiceImpl(generalProductRepository)
 
         const productPayRepository = getRepo<ProductPay>("productPay")
         const productPayServiceImpl = new ProductPayServiceImpl(productPayRepository)
@@ -57,6 +62,7 @@ export class PayRoutes{
             paymentServiceImpl, 
             payerServiceImpl, 
             productServiceImpl,
+            pgeneralProductServiceImpl,
             productPayServiceImpl,
             resourceImageServiceImpl,
             printProductPayServiceImpl,

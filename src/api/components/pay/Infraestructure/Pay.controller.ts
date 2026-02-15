@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { PayService } from "../Domain/PayService";
 import { PayerService } from "../../payer/Domain/PayerService";
-import { ProductService } from "../../product/Domain/ProductService";
-import { GetProductsById } from "../../product/Application/GetProductsById";
 import { ValidateProducts } from "../Application/ValidateProducts";
 import { MapperProductPayToItemsMP } from "../../productsPay/Application/MapperProductPayToItemsMP";
 import { PaymentService } from "../../../../libs/mercadopago";
@@ -25,7 +23,6 @@ import { GetPays } from "../Application/GetPays";
 import { GetTableTotalPay } from "../Application/GetTableTotalPay";
 import { CreateProductsPayWithResourceAndPrint } from "../../productsPay/Application/CreateProductsPayWithImageAndPrint";
 import { PrintProductPayService } from "../../printProductPay/Domain/PrintProductPayService";
-import { Product } from "../../product/Domain/Product";
 import { PARSE_INT } from "../../../../utils/parseInt";
 import { GET_NEXT_PREVIOUS_CURSOR, GET_PAGINATION_QUERY } from "../../../../utils/GetPaginationQuery";
 import { SendConfirmation } from "../../mailService/Application/SendMail";
@@ -35,7 +32,14 @@ import { productNumberGuideDTOSchema } from "./SchemaValidation/productNumberGui
 import { GetProductPayByPayId } from "../../productsPay/Application/GetProductPayByPayId";
 import { SubtractProductByQuantity } from "../../product/Application/SubtractProductByQuantity";
 import { ProductPay } from "../../productsPay/Domain/ProductPay";
-import { UpdateProducts } from "../../product/Application/UpdateProducts";
+import { Product } from "../../productIndividual/Domain/Product";
+import { GetProductsById } from "../../productIndividual/Application/GetProductsById";
+import { ProductService } from "../../productIndividual/Domain/ProductService";
+import { UpdateProducts } from "../../productIndividual/Application/UpdateProducts";
+import { GetGeneralProductsByIds } from "../../GeneralProduct/Application/GetGeneralProductByIds";
+import { GeneralProductService } from "../../GeneralProduct/Domain/GeneralProductService";
+import { GeneralProduct } from "../../GeneralProduct/Domain/GeneralProduct";
+// import { GetGeneralProductsById } from "../../GeneralProduct/Application/GetGeneralProductsById";
 
 export class PayController {
     constructor(
@@ -43,6 +47,7 @@ export class PayController {
         private paymentService: PaymentService,
         private payerService: PayerService,
         private productService: ProductService,
+        private generalProductService: GeneralProductService,
         private productPayService: ProductPayService,
         private resourceImageService: ResourceImageService,
         private printProductPayService: PrintProductPayService,
@@ -127,14 +132,16 @@ export class PayController {
             files = {}
             // return res.status(400).json({error: 'No se ha encontrado ningún archivo.'})
         }
-        console.log({elements, files, printsProductPay})
+        console.log({elements, files, printsProductPay, payerId})
         
         let payerReq: Payer
         let products: Product[]
+        let generalProds: GeneralProduct[]
         let pay: Pay 
         return new GetPayerById(this.payerService)
             .execute(payerId)
             .then(payer=>{
+                console.log({payer})
                 if(payer === null){
                     throw new Error("El payer no existe")
                 }
@@ -148,21 +155,36 @@ export class PayController {
             })
             .then(productValidate=>{
                 products = productValidate
+                let GPIds = products.map(product => product.generalProductId)
+                console.log({productValidate})
+                return new GetGeneralProductsByIds(this.generalProductService)
+                    .execute(GPIds)
+            }).then(generalProducts=>{
+                generalProds = generalProducts
                 return new ToPay()
-                    .execute(products, payerReq.id)
+                .execute(products, generalProds, payerReq.id)
             })
             .then(pay=>{
+                console.log({pay})
                 return new CreatePay(this.service)
                     .execute(pay)
             })
             .then(newPay=>{
                 pay = newPay
+                console.log({newPay})
                 return new CreateProductsPayWithResourceAndPrint(
                         this.productPayService,
                         this.resourceImageService,
                         this.printProductPayService,
                         // this.resourceImagePrintService
-                    ).execute(products, pay.id, listElements, files, printsProductPay)
+                    ).execute(
+                        products, 
+                        pay.id, 
+                        listElements, 
+                        files, 
+                        printsProductPay,
+                        generalProds
+                    )
             })
             .then(productsPay => {
                 console.log({productsPay})
@@ -174,6 +196,7 @@ export class PayController {
                     .createPrefence(items, pay, payerReq)
             })
             .then(result => {
+                console.log({result})
                 return res.json(result.init_point)
             })
             // .then(items=>{
@@ -201,6 +224,7 @@ export class PayController {
 
         try {
             const query = req?.query
+            console.log({query})
             if (query?.type === "payment") {
                 let paymentMP: PaymentResponse
                 let payerReq: Payer
