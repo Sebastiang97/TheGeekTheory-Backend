@@ -9,10 +9,11 @@ import { FileArray, UploadedFile } from "express-fileupload";
 import { ProductPayService } from "../Domain/ProductPayService";
 import { CreateProductsPay } from "./CreateProductPay";
 import { ProductPayDTO } from "../Infraestructure/Resource/req/ProductPayDTO";
-import { Product } from "../../product/Domain/Product";
 import { MapperProductToProductPay } from "./MapperProductToProductPay";
 import { PrintProductPayDTO } from "../Infraestructure/Resource/req/PrintProductPayDTO";
 import { CreatePrintsProductPay } from "../../printProductPay/Application/CreatePrintsProductPay";
+import { Product } from "../../productIndividual/Domain/Product";
+import { GeneralProduct } from "../../GeneralProduct/Domain/GeneralProduct";
 
 export class CreateProductsPayWithResourceAndPrint {
     constructor( 
@@ -28,7 +29,8 @@ export class CreateProductsPayWithResourceAndPrint {
         payId:string, 
         productsPayReq: ProductPayDTO[], 
         files: FileArray,
-        printProductPayDTO: PrintProductPayDTO[]
+        printProductPayDTO: PrintProductPayDTO[],
+        generalProducts: GeneralProduct[]
     ): Promise<ProductPay[]>{
         const res = products.map( async product =>{
             let p: PrintProductPayDTO = printProductPayDTO.filter(p=>p.idProduct == product.id)[0]
@@ -37,7 +39,7 @@ export class CreateProductsPayWithResourceAndPrint {
             
             let resourceImage: ResourceImage[] = []
             const productPayReq = productsPayReq.filter(dto => dto.id === product.id)
-            let productPay = new MapperProductToProductPay().execute(product, productPayReq[0], payId)
+            let productPay = new MapperProductToProductPay().execute(product, productPayReq[0], payId, generalProducts)
 
             let urlImage:any[] = productPay.urlImage?.length 
                 ? productPay.urlImage.map(url=>{

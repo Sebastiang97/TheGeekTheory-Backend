@@ -1,5 +1,5 @@
+import { Product } from "../../productIndividual/Domain/Product";
 import { ProductPay } from "../../productsPay/Domain/ProductPay";
-import { Product } from "../Domain/Product";
 
 
 export class SubtractProductByQuantity {

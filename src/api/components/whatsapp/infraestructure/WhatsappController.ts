@@ -8,7 +8,6 @@ export class WhatsAppController {
     
     getQRCode = (_: Request, res: Response) =>{
 
-
         if (QR_CODE_DATA) {
             return res.json({ qr: QR_CODE_DATA, isReady: IS_CLIENT_READY });
         } else {
