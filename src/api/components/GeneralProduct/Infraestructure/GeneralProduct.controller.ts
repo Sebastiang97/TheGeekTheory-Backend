@@ -13,14 +13,32 @@ import { TO_STRING } from "../../../../utils/ToString";
 import { GET_FILTER_PAGINATION_QUERY } from "../../../../utils/GetFilterByQuery";
 import { GetGeneralProductsByFilters } from "../Application/GetGeneralProductsByFilters";
 import { GET_NEXT_PREVIOUS_CURSOR } from "../../../../utils/GetPaginationQuery";
+import { DeleteColorGeneralProducts } from "../../common/Application/DeleteColorGeneralProducts";
+import { GeneralProduct } from "../Domain/GeneralProduct";
+import { GetProductByGPId } from "../../productIndividual/Application/GetProductByGPId";
+import { DeleteGeneralProduct } from "../Application/DeleteGeneralProduct";
+import { ProductService } from "../../productIndividual/Domain/ProductService";
+import { DeleteManyProducts } from "../../productIndividual/Application/DeleteManyProducts";
+import { ResourceImageService } from "../../common/Domain/ResourceImageService";
+import { DeleteProductsTagsByGPId } from "../../common/Application/DeleteProductsTagsByGPId";
+import { ColorImageService } from "../../common/Domain/ColorImageService";
+import { ColorGeneralProductService } from "../../common/Domain/ColorGeneralProductService";
+import { ColorImageSizeService } from "../../common/Domain/ColorImageSizeService";
+import { toArrayStringLowercase } from "../../../../utils/toArrayStringLowercase";
 
   
 
 export class GeneralProductController {
     constructor(
         private service: GeneralProductService,
+        private productService: ProductService,
+        private resourceImageService: ResourceImageService,
         private tagService: TagService,
-        private productTagService: ProductTagService
+        private productTagService: ProductTagService,
+        private colorGeneralProductService: ColorGeneralProductService,
+        private colorImageService: ColorImageService,
+        private colorImageSizeService: ColorImageSizeService,
+
     ){
     }
 
@@ -100,13 +118,24 @@ export class GeneralProductController {
     create = (req: Request, res: Response, ) => { 
         console.log({
             body: req.body,
+            tagsNames: req.body.tags
         })
-        let generalProduct = req.body
-        delete generalProduct.tags
-        let tagsNames:string[] =  req.body.tags
+
+        let tagsNames:string[] = toArrayStringLowercase(req.body.tags)
+        let generalProduct:any = {
+            title: req.body.title,
+            price: req.body.price,
+            description: req.body.description,
+            isVisible: req.body.isVisible,
+            categoryId: req.body.categoryId,
+            subCategoryId: req.body.subCategoryId
+        }
+        // delete generalProduct.tags
+
         generalProduct.price = parseFloat(req.body.price)
         let tags:Tag[] = []
 
+        console.log({tagsNames})
         return new GetTagsByNames(this.tagService)
             .execute(tagsNames)
             .then(newTags=>{
@@ -140,7 +169,49 @@ export class GeneralProductController {
         
     }
 
-    delete = (_: Request, __: Response, ) => {
-        
+    delete = (req: Request, res: Response, ) => {
+        const {id} = req.params
+        let gP: GeneralProduct[]
+        return new GetGeneralProductsById(this.service)
+            .execute(id)
+            .then(generalProduct=>{
+                console.log("first")
+                gP = generalProduct
+                return new DeleteProductsTagsByGPId(this.productTagService)
+                    .execute(generalProduct[0].id)
+            })
+            .then(_=>{
+                console.log("second")
+                return new DeleteColorGeneralProducts(
+                    this.colorGeneralProductService,
+                    this.colorImageService,
+                    this.colorImageSizeService,
+                    this.resourceImageService
+                )
+                .execute(gP[0].id)
+            })
+            .then(_=>{
+                console.log("third")
+                return new GetProductByGPId(this.productService)
+                .execute(gP[0].id)
+            })
+            .then(products=>{
+                console.log("fourth")
+                return new DeleteManyProducts(
+                    this.productService,
+                    this.resourceImageService
+                ).execute(products)
+            })
+            .then(_=>{
+                console.log("fifth")
+                return new DeleteGeneralProduct(this.service)
+                    .execute(gP[0].id)
+            }).then(_=>{
+                return res.status(200).json({ok: true})
+            })
+            .catch(error => {
+                console.log(error)
+                return res.status( 400 ).json(error)
+            })
     }
 }
