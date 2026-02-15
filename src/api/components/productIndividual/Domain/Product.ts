@@ -4,7 +4,7 @@ import { ResourceImage } from "../../common/Domain/ResourceImage";
 export class Product extends BaseEntity{
     constructor(
         public id                : string,
-        public name              : string,
+        public title             : string,
         public description       : string,
         public size              : string,
         public color             : string,
