@@ -1,12 +1,12 @@
-import { AppRoutes } from "./routes";
-import { Server } from "./server";
 import dotenv from 'dotenv'
+dotenv.config();
 
 
+import { AppRoutes } from "./routes"
+import { Server } from "./server"
 
 
 (async () => {
-  dotenv.config()
   main();
 })();
 
