@@ -31,6 +31,7 @@ export class GetGeneralProductsBySubcategoryId {
                 updatedAt: true,
                 subCategoryId: true,
                 categoryId: true,
+                code: true,
                 isVisible: true,
                 // Relaciones
                 

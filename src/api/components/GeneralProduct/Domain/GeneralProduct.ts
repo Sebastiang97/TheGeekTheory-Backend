@@ -12,6 +12,7 @@ export class GeneralProduct extends BaseEntity{
         public price             :number,
         public size              :string,
         public color             :string,
+        public code              :string,
         public typeStamping      :string,
         public quantity          :string,
         public subCategoryId     :string,

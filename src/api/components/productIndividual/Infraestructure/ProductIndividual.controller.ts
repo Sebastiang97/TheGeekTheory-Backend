@@ -18,6 +18,7 @@ import { UpdateIndividualProduct } from "../Application/UpdateIndividualProduct"
 import { DeleteProductById } from "../Application/DeleteProductById";
 import { DeleteImageAndResourceImage } from "../../common/Application/DeleteImageAndResourceImage";
 import { Product } from "../Domain/Product";
+import { GET_CODE } from "../../../../utils/GetCode";
 
 
   
@@ -71,6 +72,7 @@ export class ProductIndividualController {
         // product.price = parseFloat(req.body.price)
         product.quantity = parseFloat(req.body.quantity)
         product.isVisible = Boolean(product.isVisible)
+        product.code = GET_CODE(req.body.title)
         let fileImgSecond: FileArray = {}
         let fileImgMain: FileArray = {}
 

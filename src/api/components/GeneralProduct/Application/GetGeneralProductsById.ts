@@ -23,6 +23,7 @@ export class GetGeneralProductsById {
                 creationDate: true,
                 updatedAt: true,
                 subCategoryId: true,
+                code: true,
                 categoryId: true,
                 isVisible: true,
                 tags: {

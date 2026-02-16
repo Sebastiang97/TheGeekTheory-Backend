@@ -25,6 +25,7 @@ import { ColorImageService } from "../../common/Domain/ColorImageService";
 import { ColorGeneralProductService } from "../../common/Domain/ColorGeneralProductService";
 import { ColorImageSizeService } from "../../common/Domain/ColorImageSizeService";
 import { toArrayStringLowercase } from "../../../../utils/toArrayStringLowercase";
+import { GET_CODE } from "../../../../utils/GetCode";
 
   
 
@@ -128,6 +129,7 @@ export class GeneralProductController {
             description: req.body.description,
             isVisible: req.body.isVisible,
             categoryId: req.body.categoryId,
+            code: GET_CODE(req.body.title),
             subCategoryId: req.body.subCategoryId
         }
         // delete generalProduct.tags

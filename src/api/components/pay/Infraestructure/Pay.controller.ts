@@ -24,7 +24,7 @@ import { GetTableTotalPay } from "../Application/GetTableTotalPay";
 import { CreateProductsPayWithResourceAndPrint } from "../../productsPay/Application/CreateProductsPayWithImageAndPrint";
 import { PrintProductPayService } from "../../printProductPay/Domain/PrintProductPayService";
 import { PARSE_INT } from "../../../../utils/parseInt";
-import { GET_NEXT_PREVIOUS_CURSOR, GET_PAGINATION_QUERY } from "../../../../utils/GetPaginationQuery";
+import { GET_NEXT_PREVIOUS_CURSOR, GET_PAGINATION_FILTER_QUERY } from "../../../../utils/GetPaginationQuery";
 import { SendConfirmation } from "../../mailService/Application/SendMail";
 import { HTML } from "../../user/Infraestructure/templateHTML";
 import { SendMessage } from "../../whatsapp/Application/SendMessage";
@@ -77,7 +77,7 @@ export class PayController {
         const state = req.query.state as string
         const limit = PARSE_INT(req.query.limit) as number
         
-        const query = GET_PAGINATION_QUERY({limit, cursor, direction,state})
+        const query = GET_PAGINATION_FILTER_QUERY({limit, cursor, direction,state})
 
         return new GetTableTotalPay(this.service)
             .execute(query)
@@ -107,7 +107,7 @@ export class PayController {
         const state = req.query.state as string
         const limit = PARSE_INT(req.query.limit) as number
         
-        const query = GET_PAGINATION_QUERY({limit, cursor, direction,state})
+        const query = GET_PAGINATION_FILTER_QUERY({limit, cursor, direction,state})
         return new GetPayByPayerId(this.service)
             .execute(payerId, query)
             .then(pays =>{

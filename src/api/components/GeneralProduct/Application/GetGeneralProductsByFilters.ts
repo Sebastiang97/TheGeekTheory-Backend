@@ -23,6 +23,7 @@ export class GetGeneralProductsByFilters {
                 subCategoryId: true,
                 categoryId: true,
                 isVisible: true,
+                code: true,
                 tags: {
                     select: {
                         tag: true                      
