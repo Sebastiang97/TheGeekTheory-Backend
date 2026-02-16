@@ -1,12 +1,43 @@
-interface Props{
+interface PropsPaginationQuery{
+    limit:number
+    cursor: string
+    direction: string
+}
+
+
+export const GET_PAGINATION_QUERY = ({limit, cursor, direction}:PropsPaginationQuery):any => {
+    direction = direction ? direction : 'next'
+    const query:any = {
+        take: limit ? limit : 5,
+        where: {}
+        // orderBy: {
+        //     createdAt: 'desc',
+        // },
+    }
+
+    if (cursor) {
+        if (direction === 'next') {
+            cursor && (query['cursor'] = { id: cursor })
+            query['skip'] = 1 
+        } else if (direction === 'previous') {
+            cursor && (query['cursor'] = { id: cursor })
+            query['take'] = -limit
+            query['skip'] = 1 
+        }
+    }
+
+    return query
+}
+
+interface PropsPaginationFilterQuery{
     limit:number
     cursor: string
     direction: string
     state: string
+
 }
 
-
-export const GET_PAGINATION_QUERY = ({limit, cursor, direction, state}:Props):any => {
+export const GET_PAGINATION_FILTER_QUERY = ({limit, cursor, direction, state}:PropsPaginationFilterQuery):any => {
     direction = direction ? direction : 'next'
     const query:any = {
         take: limit ? limit : 5,
