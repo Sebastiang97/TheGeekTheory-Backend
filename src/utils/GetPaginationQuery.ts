@@ -2,16 +2,22 @@ interface Props{
     limit:number
     cursor: string
     direction: string
+    state: string
 }
 
 
-export const GET_PAGINATION_QUERY = ({limit, cursor, direction}:Props):any => {
+export const GET_PAGINATION_QUERY = ({limit, cursor, direction, state}:Props):any => {
     direction = direction ? direction : 'next'
     const query:any = {
         take: limit ? limit : 5,
+        where: {}
         // orderBy: {
         //     createdAt: 'desc',
         // },
+    }
+
+    if(state){
+        query.where["state"] = state
     }
 
     if (cursor) {

@@ -74,9 +74,10 @@ export class PayController {
     getPayAndPayer = (req: Request, res: Response,) => {
         const cursor = req.query.cursor as string
         const direction = req.query.direction as string
+        const state = req.query.state as string
         const limit = PARSE_INT(req.query.limit) as number
         
-        const query = GET_PAGINATION_QUERY({limit, cursor, direction})
+        const query = GET_PAGINATION_QUERY({limit, cursor, direction,state})
 
         return new GetTableTotalPay(this.service)
             .execute(query)
@@ -103,9 +104,10 @@ export class PayController {
         const {payerId} = req.params
         const cursor = req.query.cursor as string
         const direction = req.query.direction as string
+        const state = req.query.state as string
         const limit = PARSE_INT(req.query.limit) as number
         
-        const query = GET_PAGINATION_QUERY({limit, cursor, direction})
+        const query = GET_PAGINATION_QUERY({limit, cursor, direction,state})
         return new GetPayByPayerId(this.service)
             .execute(payerId, query)
             .then(pays =>{

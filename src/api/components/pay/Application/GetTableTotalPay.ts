@@ -6,15 +6,15 @@ export class GetTableTotalPay {
 
   execute(query: any): Promise<Pay[]> {
     
-
     return this.payService.findAll({
-      ...query,
+      ...query,      
       include: {
         payer: {
           select: {
             email: true,
             name: true,
-            surname: true
+            surname: true,
+            phone: true
           }
         }
       }
