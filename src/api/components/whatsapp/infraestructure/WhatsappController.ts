@@ -7,8 +7,7 @@ export class WhatsAppController {
     }
     
     getQRCode = (_: Request, res: Response) =>{
-
-        if (QR_CODE_DATA) {
+        if (QR_CODE_DATA || IS_CLIENT_READY) {
             return res.json({ qr: QR_CODE_DATA, isReady: IS_CLIENT_READY });
         } else {
             return res.status(404).json({ message: 'QR not available' });
